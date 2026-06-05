@@ -1,0 +1,1 @@
+The cocktail mixer has a drink they add to during combat. Before each combat it must be empty (anything left over at the end of combat must be drunk)

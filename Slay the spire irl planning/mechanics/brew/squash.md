@@ -1,0 +1,1 @@
+when drank, draw 1 card

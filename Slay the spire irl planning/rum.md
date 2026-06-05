@@ -1,0 +1,1 @@
+Deal 7 damage, brew 2 splashes of rum

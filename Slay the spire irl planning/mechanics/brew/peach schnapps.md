@@ -1,0 +1,1 @@
+Enemy loses 3 hp, gain 3 hp

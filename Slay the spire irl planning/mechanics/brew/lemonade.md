@@ -1,0 +1,1 @@
+When drank, apply 2 weak
