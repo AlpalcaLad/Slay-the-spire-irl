@@ -6,7 +6,7 @@ import qr_read
 import keyboard
 import os
 
-class game():
+class manager():
     def __init__(self):
         self.oldCards = []
         self.r = qr_read.reader()
@@ -17,7 +17,7 @@ class game():
 
     def main(self):
         while True:
-            time.sleep(0.001)
+            time.sleep(1/120) #120 fps cap
             self.elapsedTime=time.time()-self.startTime
             #print(self.elapsedTime)
             self.tick()
@@ -28,10 +28,13 @@ class game():
             self.queryConn.send("./testdata/QRcodes1.png" if keyboard.is_pressed("n") else "./testdata/QRcodes2.png")
         else:
             if self.queryConn.poll():
-                recieved = self.queryConn.recv()
-                print(recieved)
+                recieved = list(self.queryConn.recv())
+                for i in recieved:
+                    if i not in self.oldCards:
+                        pass #Send card to pygame for processing
+                self.oldCards = recieved
                 self.awaiting=False
 
 if __name__=="__main__":
-    g = game()
+    g = manager()
     g.main()

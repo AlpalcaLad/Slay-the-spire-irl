@@ -5,7 +5,7 @@ Multiple routes like spire (???).
 
 Final boss has unique drinking related debuff
 
-
+[[Gameplay loop]]
 
 **Character options**
 [[Beer master]]
