@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "characters/Wine connoisseur.md",
+                "file": "core/Main concept.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Wine connoisseur"
+              "title": "Main concept"
             }
           },
           {
@@ -242,6 +242,8 @@
   },
   "active": "47ed6ca2643713e4",
   "lastOpenFiles": [
+    "core/Gameplay loop.md",
+    "characters/Wine connoisseur.md",
     "mechanics/brew/vodka.md",
     "mechanics/brew/lemonade.md",
     "characters/Cocktail mixer.md",
@@ -261,10 +263,8 @@
     "cards/cocktail mixer/Clear(ly) strong.md",
     "cards/cocktail mixer/Bump the flavour.md",
     "cards/unclassed/defend.md",
-    "core/Gameplay loop.md",
     "core/Main concept.md",
     "characters/Designated driver.md",
-    "characters/Wine connoisseur.md",
     "mechanics/brew/Brew.md",
     "Untitled.base",
     "mechanics/brew",

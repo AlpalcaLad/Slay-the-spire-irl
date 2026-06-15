@@ -1,6 +1,10 @@
 
 One map of 12 rooms per run. 
 
+rest sites
+- heal for 30(??)% of health and take a drink
+- Gain a random potion
+
 Multiple routes like spire (???).
 
 Final boss has unique drinking related debuff

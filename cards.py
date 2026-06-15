@@ -1,5 +1,4 @@
 import random
-from main import player
 
 class context():
     def __init__(self):
@@ -20,8 +19,7 @@ class card():
         if c.source is None or c.target is None:
             return
         dmg = self.dmg
-        if isinstance(c.source,player):
-            pass #apply buffs
+        pass #apply buffs
         c.target.damage(dmg)
 
 
