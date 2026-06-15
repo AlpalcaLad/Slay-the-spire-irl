@@ -32,6 +32,7 @@ class entity():
         self.name = "entity"
         self.x = 0
         self.y = 0
+        self.friendly = False
 
     def damage(self,dmg):
         #naive formula
@@ -48,6 +49,7 @@ class player(entity):
         super().__init__()
         self.deck = []
         self.relics = []
+        self.friendly = True
 
         match className: #setup player class
             case "cocktail":
@@ -83,9 +85,13 @@ class game():
         font = pygame.font.SysFont(None, 36)
         #UI definition
 
+        #gameplay definition
+        self.players = []
+        self.enemies = []
+
     def readCard(self,cardText: str):
         if cardText.startswith("player"):
-            pass #create player
+            pass #create player or set target
         if cardText[-1] in ["1","2","3","4"]:
             pass #play card for given player
         return
@@ -99,6 +105,8 @@ class game():
                     pygame.quit()
                     self.run=False
             
+            #read in any cards
+
             #render UI
 
             #render players

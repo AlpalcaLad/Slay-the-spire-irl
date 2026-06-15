@@ -32,7 +32,8 @@ class reader():
             imgToProcess = conn.recv()
             if imgToProcess is not None:
                 #start = time.time()
-                conn.send(self.readCodes(cv2.cvtColor(cv2.imread(imgToProcess),cv2.COLOR_BGR2RGB)))
+                conn.send(self.readCodes(cv2.cvtColor(imgToProcess,cv2.COLOR_BGR2RGB)))
+                #conn.send(self.readCodes(cv2.cvtColor(cv2.imread(imgToProcess),cv2.COLOR_BGR2RGB)))
                 #print(str(time.time()-start) + " seconds to process")
 
     def setupThread(self):

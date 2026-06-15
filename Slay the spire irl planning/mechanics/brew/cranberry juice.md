@@ -1,1 +1,1 @@
-Gain 6 block
+Gain 1 block

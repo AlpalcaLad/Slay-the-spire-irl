@@ -14,6 +14,7 @@ class manager():
         self.startTime = time.time()
         self.elapsedTime = 0
         self.awaiting = False
+        self.cam = cv2.VideoCapture(0)
 
     def main(self):
         while True:
@@ -25,13 +26,16 @@ class manager():
     def tick(self):
         if not self.awaiting:
             self.awaiting=True
-            self.queryConn.send("./testdata/QRcodes1.png" if keyboard.is_pressed("n") else "./testdata/QRcodes2.png")
+            ret, frame = self.cam.read()
+            #cv2.imshow("feed",frame)
+            self.queryConn.send(frame)
+            #self.queryConn.send("./testdata/QRcodes1.png" if keyboard.is_pressed("n") else "./testdata/QRcodes2.png")
         else:
             if self.queryConn.poll():
                 recieved = list(self.queryConn.recv())
                 for i in recieved:
-                    if i not in self.oldCards:
-                        pass #Send card to pygame for processing
+                    if i is not None and i not in self.oldCards:
+                        print(i) #Send card to pygame for processing
                 self.oldCards = recieved
                 self.awaiting=False
 
