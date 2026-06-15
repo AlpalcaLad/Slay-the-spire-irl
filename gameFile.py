@@ -19,8 +19,8 @@ class sprite():
         self.g.screen.blit(
             self.img,
             (
-                self.parent.x,
-                self.parent.y
+                self.p.x,
+                self.p.y
             ),
         )
 
@@ -45,24 +45,31 @@ class entity():
         print(self.name + " died")
 
 class player(entity):
-    def __init__(self,className):
+    def __init__(self,className,g):
         super().__init__()
         self.deck = []
         self.relics = []
         self.friendly = True
+        self.g = g
+        self.y = self.g.H-300
 
         match className: #setup player class
-            case "cocktailmixer":
+            case "cocktailmaker":
                 self.hp=100
                 self.deck = []
+                self.s = sprite(self,g,"./art/player1Art.png")
+                self.x = 2*self.g.W//5
             case "beermaster":
-                pass
+                self.s = sprite(self,g,"./art/player1Art.png")
+                self.x = 1*self.g.W//5
             case "winecon":
-                pass
+                self.s = sprite(self,g,"./art/player1Art.png")
+                self.x = 3*self.g.W//5
             case "designateddriver":
-                pass
+                self.s = sprite(self,g,"./art/player1Art.png")
+                self.x = 4*self.g.W//5
             case _:
-                pass
+                self.s = sprite(self,g,"./art/player1Art.png")
 
         self.className = className
 
@@ -81,29 +88,43 @@ class game():
         self.cardsToBePlayed = []
         #basic pygame setup
         pygame.init()
-        self.W, self.H = 600, 600
+        self.W, self.H = 1200, 900
         self.screen = pygame.display.set_mode((self.W,self.H))
         pygame.display.set_caption("Slay the Spire IRL")
         self.clock = pygame.time.Clock()
-        font = pygame.font.SysFont(None, 36)
+        self.font = pygame.font.SysFont(None, 36)
         #UI definition
 
         #gameplay definition
         self.players = []
         self.enemies = []
 
+    def mapToChar(self,string):
+        if string=="1":
+            return "beermaster"
+        elif string=="2":
+            return "cocktailmaker"
+        elif string=="3":
+            return "winecon"
+        else:
+            return "designateddriver"
+
     def readCard(self,cardText: str):
-        if cardText in ["cocktailmixer","beermaster","winecon","designateddriver"]:
+        if cardText in ["cocktailmaker","beermaster","winecon","designateddriver"]:
             found = False
             for p in self.players:
                 if p.className == cardText:
                     c.target = p
                     found = True
             if not found:
-                self.players.append(player(cardText))
+                self.players.append(player(cardText,self))
 
         elif cardText[-1] in ["1","2","3","4"]:
-            pass #play card for given player
+            charName = self.mapToChar(cardText[-1])
+            for p in self.players:
+                if p.className == charName:
+                    p.play(cardText)
+
         print("Read card ",cardText)
         return
 
@@ -112,12 +133,13 @@ class game():
         self.cardsToBePlayed = sharedArray
         return sharedArray
 
-    def mainloop(self,):
+    def mainloop(self):
         self.screen.fill(colours["black"])
-        for e in pygame.event.get():
-            if e.type == pygame.QUIT:
-                pygame.quit()
-                self.run=False
+
+        e = pygame.event.poll()
+        if e.type == pygame.QUIT:
+            pygame.quit()
+            self.run=False
         
         #read in any cards
         if len(self.cardsToBePlayed) > 0:
@@ -127,8 +149,13 @@ class game():
         #render UI
 
         #render players
+        for p in self.players:
+            p.s.draw()
 
         #render events
+
+        #finish up
+        pygame.display.flip()
 
     def waitTick(self,fps):
         self.clock.tick(fps)
