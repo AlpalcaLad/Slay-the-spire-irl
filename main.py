@@ -41,20 +41,10 @@ class manager():
         if not self.awaiting:
             self.awaiting=True
             ret, frame = self.cam.read()
-            
-            #check mean of diff image
-            #discarding where too much has changed
-            # if self.prevImage is not None:
-            #     diffImage = cv2.absdiff(self.prevImage,frame)
-            #     mask = cv2.cvtColor(diffImage,cv2.COLOR_BGR2GRAY)
-            #     noise = cv2.mean(mask)[0]
-            #     #print(noise)
 
             #self.prevImage = frame
             #cv2.imshow("feed",frame)
             self.queryConn.send(frame)
-            #print("requested, ", random.random())
-            #self.queryConn.send("./testdata/QRcodes1.png" if keyboard.is_pressed("n") else "./testdata/QRcodes2.png")
         else:
             if self.queryConn.poll():
                 received = list(self.queryConn.recv())

@@ -7,6 +7,13 @@ class context():
 
 c = context()
 
+def getcard(cardName):
+    match cardName:
+        case "strike1":
+            return strike1()
+        case _:
+            return card()
+
 class card():
     def __init__(self):
         self.dmg = 0
@@ -22,8 +29,7 @@ class card():
         pass #apply buffs
         c.target.damage(dmg)
 
-
-class strike(card):
+class strike1(card):
     def __init__(self):
         super().__init__()
 
