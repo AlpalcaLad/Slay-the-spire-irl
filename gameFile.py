@@ -53,6 +53,7 @@ class healthbar():
 class entity():
     def __init__(self):
         self.hp = 1
+        self.hpMax = self.hp
         self.block = 0
         self.effects = []
         self.name = "entity"
@@ -161,6 +162,7 @@ class game():
                 if p.className == cardText:
                     c.target = p
                     found = True
+                    break
             if not found:
                 self.players.append(player(cardText,self))
 
@@ -169,6 +171,23 @@ class game():
             for p in self.players:
                 if p.className == charName:
                     p.play(cardText)
+
+        elif cardText.startswith("enemy"):
+            found = False
+            for e in self.enemies:
+                if e.enName == cardText:
+                    c.target = e
+                    found = True
+                    break
+            if not found:
+                en = getenemy(cardText)(self)
+                en.enName = cardText
+                self.enemies.append(en)
+                #reposition all enemies
+                incrX = self.H/(len(self.enemies)+1)
+                for i in range(len(self.enemies)):
+                    self.enemies[i].x = incrX * (i+1)
+                    self.enemies[i].h.x = self.enemies[i].x #update healthbar positions
 
         #print("Read card ",cardText)
         return
@@ -207,6 +226,10 @@ class game():
         #render players
         for p in self.players:
             p.draw()
+
+        #render enemies
+        for e in self.enemies:
+            e.draw()
 
         #render events
 
