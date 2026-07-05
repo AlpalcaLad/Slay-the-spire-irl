@@ -1,9 +1,24 @@
 import random
+import math
+import pygame
 
 class context():
     def __init__(self):
         self.target = None
         self.source = None
+        self.asset = "./art/marker.png"
+        self.offset = 0
+
+    def draw(self):
+        if self.target is not None:
+            self.offset = (self.offset+0.02)%(2*math.pi)
+            self.g.screen.blit(
+                self.img,
+                (
+                    self.target.x+32,
+                    self.target.y - 32 - 5*math.sin(self.offset)
+                )
+            )
 
 c = context()
 

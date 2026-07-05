@@ -88,12 +88,14 @@ class player(entity):
                 self.deck = []
                 self.s = sprite(self,g,"./art/player1Art.png")
                 self.x = 2*self.g.W//5-55
+                self.hatchEffects = []
             case "beermaster":
                 self.s = sprite(self,g,"./art/player1Art.png")
                 self.x = 1*self.g.W//5-45
             case "winecon":
                 self.s = sprite(self,g,"./art/player1Art.png")
                 self.x = 3*self.g.W//5-35
+                self.wine = 0
             case "designateddriver":
                 self.s = sprite(self,g,"./art/player1Art.png")
                 self.x = 4*self.g.W//5-25
@@ -137,6 +139,8 @@ class game():
             # sprite(self,self,"./art/backdropTree.png"),
             # sprite(self,self,"./art/backdropGrass.png")
         ]
+        c.img = pygame.image.load(c.asset).convert_alpha()
+        c.g = self
 
         #gameplay definition
         self.players = []
@@ -164,7 +168,9 @@ class game():
                     found = True
                     break
             if not found:
-                self.players.append(player(cardText,self))
+                p = player(cardText,self)
+                self.players.append(p)
+                c.target = p
 
         elif cardText[-1] in ["1","2","3","4"]:
             charName = self.mapToChar(cardText[-1])
@@ -181,6 +187,7 @@ class game():
                     break
             if not found:
                 en = getenemy(cardText)(self)
+                c.target = en
                 en.enName = cardText
                 self.enemies.append(en)
                 #reposition all enemies
@@ -230,6 +237,9 @@ class game():
         #render enemies
         for e in self.enemies:
             e.draw()
+
+        #render misc ui
+        c.draw()
 
         #render events
 
