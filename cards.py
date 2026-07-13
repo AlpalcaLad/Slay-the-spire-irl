@@ -19,6 +19,26 @@ class context():
                     self.target.y - 32 - 5*math.sin(self.offset)
                 )
             )
+            
+class instruction():
+    def __init__(self,text,target=None,blocking=False):
+        self.text = text
+        self.target = target
+        self.duration = 0
+
+    def draw():
+        pass
+
+class instructionHandler():
+    def __init__(self,g):
+        self.queue = []
+        self.active = []
+        self.baseTime = 120 #base duration of an instruction
+        self.extraTime = 30 #extra duration per word
+        self.g = g
+
+    def draw(self):
+        pass
 
 c = context()
 

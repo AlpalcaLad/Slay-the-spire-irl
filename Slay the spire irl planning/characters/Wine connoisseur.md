@@ -17,7 +17,7 @@ tipsy - next ca
 findable cards
 [[royal gamble]] (Play a random card from your hand for free, 1 cost, SKILL)
 [[snobbery]] (Gain 1 strength this turn, costs 1, SKILL)
-[[Reverse Vinyard]] (add 2 grapes to your hand and take 1 sip, 1 cost, SKILL)
+[[Reverse Vinyard]] (add 2 grapes to your hand, 1 cost, SKILL)
 [[Grape vine]] (at the start of each turn, gain 1 grape, 1 cost POWER)
 [[bottle it up]] (Gain 3 block, costs 2, SKILL)
 [[Grape dance]] (Gain 4 grapes, Exhaust, costs 1 SKILL)

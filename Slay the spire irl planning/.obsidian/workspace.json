@@ -83,12 +83,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "characters/Wine connoisseur.md",
+                "file": "mechanics/buffs and debuffs.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Wine connoisseur"
+              "title": "buffs and debuffs"
             }
           }
         ],
@@ -256,8 +256,9 @@
   },
   "active": "17feb3b2d5aa4323",
   "lastOpenFiles": [
-    "characters/Cocktail mixer.md",
     "characters/Wine connoisseur.md",
+    "mechanics/buffs and debuffs.md",
+    "characters/Cocktail mixer.md",
     "characters/Beer master.md",
     "mechanics/brew/squash.md",
     "cards/cocktail mixer/Key ingredient.md",
@@ -290,7 +291,6 @@
     "cards/cocktail mixer",
     "cards/unclassed",
     "cards/beer master",
-    "cards",
-    "create a link.md"
+    "cards"
   ]
 }
