@@ -141,6 +141,7 @@ class game():
         ]
         c.img = pygame.image.load(c.asset).convert_alpha()
         c.g = self
+        iHandler.g = self
 
         #gameplay definition
         self.players = []
@@ -176,7 +177,7 @@ class game():
             charName = self.mapToChar(cardText[-1])
             for p in self.players:
                 if p.className == charName:
-                    p.play(cardText)
+                    p.play(cardText[:-1])
 
         elif cardText.startswith("enemy"):
             found = False
