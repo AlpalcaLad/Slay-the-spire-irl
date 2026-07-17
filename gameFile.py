@@ -131,7 +131,10 @@ class game():
         self.screen = pygame.display.set_mode((self.W,self.H))#, pygame.FULLSCREEN)
         pygame.display.set_caption("Slay the Spire IRL")
         self.clock = pygame.time.Clock()
+
         self.font = pygame.font.SysFont("kreon", 22)
+        self.eventFont = pygame.font.SysFont("kreon", 36)
+
         #UI definition
         self.backdrops = [
             sprite(self,self,"./art/protoBackdrop.png")
@@ -196,6 +199,9 @@ class game():
                 for i in range(len(self.enemies)):
                     self.enemies[i].x = incrX * (i+1)
                     self.enemies[i].h.x = self.enemies[i].x #update healthbar positions
+        
+        elif cardText.startswith("event"):
+            iHandler.queue.append(getevent(cardText.replace("event","",1)))
 
         #print("Read card ",cardText)
         return
@@ -243,6 +249,7 @@ class game():
         c.draw()
 
         #render events
+        iHandler.draw()
 
         #finish up
         pygame.display.flip()

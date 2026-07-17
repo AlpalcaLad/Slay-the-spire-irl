@@ -21,6 +21,42 @@ class context():
                 )
             )
             
+def textMulti(g,textArray,cntr,backbox=True):
+    fnts = []
+    stats = []
+    height = 0
+    width = 0
+    padding = 8
+
+    #first pass build all the lines and measure them
+    for t in textArray:
+        fnt = g.eventFont.render(
+            t, True, (255,255,255)
+        )
+        stat = fnt.get_rect()
+        stats.append(stat)
+        fnts.append(fnt)
+        width = max(width,stat.width)
+        height += stat.height+4
+
+    #draw backbox
+    pygame.draw.rect(g.screen,(40,40,40),(
+            cntr[0]-width//2-padding,
+            cntr[1]-height//2-padding,
+            width+padding,
+            height+padding
+        ), 
+    border_radius=8)
+
+    #second pass draw all the lines in correct positions
+    curY = cntr[1]-height/2
+    for f,s in zip(fnts,stats):
+        g.screen.blit(
+            f,
+            (cntr[0]-s.width//2,curY)
+        )
+        curY += s.height+4
+
 class instruction():
     def __init__(self,text : list,duration :int=60,target=None,blocking : bool=False):
         self.text = text
@@ -29,10 +65,12 @@ class instruction():
         self.blocking = blocking
         self.g = iHandler.g
         self.border = 30
+        self.r = 8
 
     def draw(self):
-        self.duration -= 1 
-        if self.duration < 0:
+        #can set duration to -1 to make it permenant until proceeding
+        if self.duration > 0: self.duration -= 1 
+        if self.duration == 0:
             iHandler.active.remove(self)
         
         if len(self.text) == 0: return
@@ -40,14 +78,8 @@ class instruction():
         if self.target is None: #draw in center of screen
             #draw rectangle
             cntr = (self.g.W/2, self.g.H/2)
-            size = (
-                np.max([
-                    self.g.font.size(t)[0]
-                    for t in self.text
-                ]) + self.border,
-                self.g.font.size(self.text)[1]*len(self.text) + self.border
-            )
-        
+            textMulti(self.g,self.text,cntr,True)
+            
 
 class instructionHandler():
     def __init__(self):
@@ -59,8 +91,23 @@ class instructionHandler():
     def draw(self):
         if len(self.active) < 1 or not self.active[-1].blocking:
             if len(self.queue) > 0:
-                #add from queue
-                pass
+                for instr in self.queue:
+                    if instr.blocking:
+                        if len(self.active)<1:
+                            self.active.append(instr)
+                            self.queue.remove(instr)
+                        break
+                    else:
+                        busy = False
+                        for instr2 in self.active:
+                            if instr.target==instr2.target:
+                                busy = True
+                                break
+                        if not busy:
+                            self.active.append(instr)
+                            self.queue.remove(instr)
+                        else:
+                            break
 
         for instr in self.active:
             instr.draw()
@@ -68,6 +115,24 @@ class instructionHandler():
 c = context()
 
 iHandler = instructionHandler()
+
+def getevent(eventName):
+    match eventName:
+        case "bus":
+            return busEvent()
+        case _:
+            raise Exception("Event not found!")
+
+def busEvent():
+    return instruction(
+        [
+            "You come across a lone party bus in the road",
+            "inside the minifridge are a selection of drinks",
+            "everyone gets 1 potion"
+        ],
+        duration=900,
+        blocking=True
+    )
 
 def getcard(cardName):
     match cardName:
