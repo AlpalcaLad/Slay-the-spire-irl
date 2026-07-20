@@ -1,1 +1,1 @@
-When drank, apply 2 weak
+When drank, gain 2 block

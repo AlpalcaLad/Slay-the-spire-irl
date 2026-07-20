@@ -1,1 +1,1 @@
-When drank, apply 2 vulnerable
+When drank, deal 2 damage

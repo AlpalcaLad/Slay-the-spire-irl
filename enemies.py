@@ -32,7 +32,7 @@ class enemy(entity):
         pass
 
     def act(self):
-        pass
+        self.b.startturn()
 
 class enemyrat(enemy):
     def __init__(self,g):

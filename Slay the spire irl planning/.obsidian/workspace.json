@@ -64,7 +64,7 @@
             }
           },
           {
-            "id": "32b5ab64d3844a95",
+            "id": "28df5be538cf0e0b",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -78,7 +78,49 @@
             }
           },
           {
+            "id": "6084ad7ea20c3d0a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "characters/Wine connoisseur.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Wine connoisseur"
+            }
+          },
+          {
+            "id": "66c9925f363bb623",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "characters/Designated driver.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Designated driver"
+            }
+          },
+          {
             "id": "17feb3b2d5aa4323",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "core/relics.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "relics"
+            }
+          },
+          {
+            "id": "e6d5ad999582815d",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -254,34 +296,34 @@
       "bases:Create new base": false
     }
   },
-  "active": "17feb3b2d5aa4323",
+  "active": "6084ad7ea20c3d0a",
   "lastOpenFiles": [
-    "characters/Wine connoisseur.md",
-    "mechanics/buffs and debuffs.md",
     "characters/Cocktail mixer.md",
+    "characters/Wine connoisseur.md",
+    "characters/Designated driver.md",
     "characters/Beer master.md",
+    "core/Main concept.md",
+    "core/relics.md",
+    "mechanics/buffs and debuffs.md",
+    "Spin the bottle.md",
+    "mechanics/brew/prosecco.md",
+    "mechanics/brew/peach schnapps.md",
+    "mechanics/brew/cranberry juice.md",
+    "mechanics/brew/lemonade.md",
+    "mechanics/brew/vodka.md",
+    "mechanics/brew/rum.md",
     "mechanics/brew/squash.md",
     "cards/cocktail mixer/Key ingredient.md",
-    "mechanics/brew/rum.md",
-    "mechanics/brew/vodka.md",
-    "mechanics/brew/cranberry juice.md",
     "cards/cocktail mixer/Down the hatch.md",
     "cards/cocktail mixer/Clear(ly) strong.md",
-    "characters/Designated driver.md",
-    "mechanics/brew/peach schnapps.md",
     "cards/unclassed/strike.md",
     "cards/unclassed/defend.md",
-    "core/Main concept.md",
     "core/Gameplay loop.md",
-    "mechanics/brew/lemonade.md",
     "mechanics/brew/orange juice.md",
     "mechanics/brew/See sunrise.md",
     "mechanics/brew/Red moon.md",
     "cards/wine connoisseur/wine break.md",
     "cards/wine connoisseur/top me up.md",
-    "cards/cocktail mixer/lemon up.md",
-    "cards/cocktail mixer/Bump the flavour.md",
-    "mechanics/brew/Brew.md",
     "Untitled.base",
     "mechanics/brew",
     "core",

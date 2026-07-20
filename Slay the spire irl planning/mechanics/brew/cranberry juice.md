@@ -1,1 +1,1 @@
-Gain 1 block
+Apply 2 weak

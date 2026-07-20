@@ -21,7 +21,7 @@ class context():
                 )
             )
             
-def textMulti(g,textArray,cntr,backbox=True):
+def textMulti(g,textArray,cntr,backbox=True,adjustCenterHeight=False):
     fnts = []
     stats = []
     height = 0
@@ -39,14 +39,18 @@ def textMulti(g,textArray,cntr,backbox=True):
         width = max(width,stat.width)
         height += stat.height+4
 
+    if adjustCenterHeight:
+        cntr[1]-=height//2
+
     #draw backbox
-    pygame.draw.rect(g.screen,(40,40,40),(
-            cntr[0]-width//2-padding,
-            cntr[1]-height//2-padding,
-            width+padding,
-            height+padding
-        ), 
-    border_radius=8)
+    if backbox:
+        pygame.draw.rect(g.screen,(40,40,40),(
+                cntr[0]-width//2-padding,
+                cntr[1]-height//2-padding,
+                width+padding,
+                height+padding
+            ), 
+        border_radius=8)
 
     #second pass draw all the lines in correct positions
     curY = cntr[1]-height/2
@@ -79,6 +83,9 @@ class instruction():
             #draw rectangle
             cntr = (self.g.W/2, self.g.H/2)
             textMulti(self.g,self.text,cntr,True)
+        else:
+            cntr = (self.target.x,self.target.y-24)
+            textMulti(self.g,self.text,cntr,True,True)
             
 
 class instructionHandler():
@@ -112,6 +119,8 @@ class instructionHandler():
         for instr in self.active:
             instr.draw()
 
+        #print("-----------\n",self.queue,self.active)
+
 c = context()
 
 iHandler = instructionHandler()
@@ -144,21 +153,57 @@ def getcard(cardName):
 class card():
     def __init__(self):
         self.dmg = 0
+        self.block = 0
+        self.cost = 0
+        self.sips = 0
 
     def play(self):
         pass
 
-    def damage(self):
+    def damage(self, times=1):
         #must have attacker and target
         if c.source is None or c.target is None:
             return
         dmg = self.dmg
-        pass #apply buffs
-        c.target.damage(dmg)
+
+        strength = c.source.b.strength
+        weak = c.source.b.weak
+        vulnerable = c.target.b.vulnerable
+        
+        dmg += strength
+        if vulnerable > 0:
+            dmg *= 2
+            c.target.b.vulnerable -= 1
+        if weak > 0:
+            dmg = math.floor(dmg / 2)
+            c.source.b.weak -= 1
+
+        for t in times:
+            c.target.damage(dmg)
+    
+    def protect(self):
+        blk = self.block
+
+        if self.frail > 0:
+            blk = math.floor(blk / 2)
+
+        c.target.block += blk
+    
+    def sip(self):
+        iHandler.queue.append(instruction([
+            "take "+str(self.sips)+" sips!"
+        ],60,c.source,False))
+
+    def exhaust(self):
+        iHandler.queue.append(instruction([
+            "Card exhausted!"
+        ],60,c.source,False))
 
 class strike(card):
     def __init__(self):
         super().__init__()
+        self.cost = 1
+        self.dmg = 1
 
     def play(self):
-        pass
+        self.damage()

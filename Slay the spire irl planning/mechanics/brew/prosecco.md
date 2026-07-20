@@ -1,0 +1,1 @@
+Exhaust up to 2 cards in your hand

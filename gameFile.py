@@ -49,21 +49,61 @@ class healthbar():
             (self.x+self.w+14,self.y-3)
         )
         
+class buffHandler():
+    def __init__(self):
+        self.vulnerable = 0
+        self.weak = 0
+        self.frail = 0
+        self.strength = 0
+        self.tipsy = 0
+
+        self.permaStrength = 0
+
+        #special
+        self.store = [] #stored effects
+
+        self.freeSkill = 0
+        self.freeAttack = 0
+        self.freePower = 0
+        self.freeCard = 0
+
+        self.freeCardNames = []
+
+    def reset(self):
+        self.strength = self.permaStrength
+        self.weak = 0
+        self.tipsy = 0
+        self.vulnerable = 0
+    
+    def startturn(self):
+        if self.weak>0: self.weak -= 1
+        if self.vulnerable>0: self.vulnerable -= 1
+        if self.frail>0: self.frail -= 1
+        self.freeCard = 0
 
 class entity():
     def __init__(self):
         self.hp = 1
         self.hpMax = self.hp
         self.block = 0
-        self.effects = []
         self.name = "entity"
         self.x = 0
         self.y = 0
         self.friendly = False
 
+        self.acting = False
+
+        #buffs and debuffs
+        self.b = buffHandler()
+
     def damage(self,dmg):
-        #naive formula
-        self.hp -= dmg
+        blockAm = min(dmg,self.block)
+        self.block -= blockAm
+
+        dmg -= blockAm
+        if dmg > 0:
+            hp -= dmg
+
         if self.hp <= 0:
             self.die()
 
@@ -79,8 +119,10 @@ class player(entity):
         self.deck = []
         self.relics = []
         self.friendly = True
-        self.g = g
+        self.g : game = g
         self.y = self.g.H-250
+        self.energyMax = 3
+        self.energy = 0
 
         match className: #setup player class
             case "cocktailmaker":
@@ -108,11 +150,40 @@ class player(entity):
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
 
     def play(self,cardText):
-        print(cardText)
+        if not self.g.playerTurn:
+            self.g.actionQueue.append((self.play,cardText))
+            return
+        
+        cardToPlay = getcard(cardText)
+        cost = cardToPlay.cost
+
+        if self.b.freeCard > 0: #e.g. "next card you play is free"
+            cost = 0
+            self.b.freeCard -= 1
+
+        if cardText in self.b.freeCardNames: #e.g. "all cards named after a drink are free"
+            cost = 0
+
+        if cost > self.energy:
+            iHandler.queue.append(instruction([
+                "You don't have enough energy!"
+            ],120,self,False))
+        else:
+            self.energy-=cost
+            cardToPlay.play()
+        
 
     def draw(self):
         self.s.draw()
         self.h.draw()
+
+    def endturn(self):
+        pass
+
+    def startturn(self):
+        self.block = 0
+        self.energy = self.energyMax
+        self.b.startturn()
 
 colours = {
     "black": (0,0,0),
@@ -147,11 +218,24 @@ class game():
         iHandler.g = self
 
         #gameplay definition
-        self.players = []
-        self.enemies = []
+        self.players: list[player] = []
+        self.enemies: list[enemy] = []
         self.actionQueue = []
-        self.playerTurn = False #whether players can play cards
+        self.playerTurn = True #whether players can play cards
 
+    def endturn(self):
+        for p in self.players:
+            if p.acting:
+                self.actionQueue.append((self.endturn,))
+                return
+
+        for p in self.players:
+            p.endturn()
+        
+        self.playerTurn = False
+
+        for e in self.enemies:
+            e.act()
 
     def mapToChar(self,string):
         if string=="1":
@@ -164,6 +248,9 @@ class game():
             return "designateddriver"
 
     def readCard(self,cardText: str):
+        if cardText == "endturn":
+            self.endturn()
+
         if cardText in ["cocktailmaker","beermaster","winecon","designateddriver"]:
             found = False
             for p in self.players:
@@ -180,19 +267,27 @@ class game():
             charName = self.mapToChar(cardText[-1])
             for p in self.players:
                 if p.className == charName:
-                    p.play(cardText[:-1])
+                    tempText = cardText[:-1]
+                    if tempText[-1].isupper():
+                        p.play(tempText[:-1])
+                    else:
+                        p.play(tempText)
 
         elif cardText.startswith("enemy"):
+            tempText = cardText
+            if tempText[-1].isupper():
+                tempText=tempText[:-1]
+
             found = False
             for e in self.enemies:
-                if e.enName == cardText:
+                if e.enName == tempText:
                     c.target = e
                     found = True
                     break
             if not found:
-                en = getenemy(cardText)(self)
+                en = getenemy(tempText)(self)
                 c.target = en
-                en.enName = cardText
+                en.enName = tempText
                 self.enemies.append(en)
                 #reposition all enemies
                 incrX = self.H/(len(self.enemies)+1)
@@ -201,7 +296,11 @@ class game():
                     self.enemies[i].h.x = self.enemies[i].x #update healthbar positions
         
         elif cardText.startswith("event"):
-            iHandler.queue.append(getevent(cardText.replace("event","",1)))
+            tempText = cardText
+            if tempText[-1].isupper():
+                tempText=tempText[:-1]
+
+            iHandler.queue.append(getevent(tempText.replace("event","",1)))
 
         #print("Read card ",cardText)
         return
@@ -222,9 +321,16 @@ class game():
             pygame.quit()
             self.run=False
         
+        #play any waiting actions
+        if len(self.actionQueue)>0:
+            length = len(self.actionQueue)
+            for i in range(length):
+                action = self.actionQueue.pop(0)
+                action[0](action[1]) #apply action with arguments
+
         #read in any cards
         if len(self.cardsToBePlayed) > 0:
-            newCard = self.cardsToBePlayed.pop()
+            newCard = self.cardsToBePlayed.pop(0)
             self.readCard(newCard)
 
         #render UI
@@ -240,7 +346,19 @@ class game():
         #render players
         for p in self.players:
             p.draw()
-
+        
+        #check if enemy turn over
+        if not self.playerTurn and len(self.enemies) > 0:
+            found = False
+            for e in self.enemies:
+                if e.acting:
+                    found = True
+            if not found:
+                self.playerTurn = True
+                for p in self.players:
+                    p.startturn()
+                
+        
         #render enemies
         for e in self.enemies:
             e.draw()

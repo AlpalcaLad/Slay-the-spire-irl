@@ -1,1 +1,1 @@
-Enemy loses 1 hp, gain 1 hp
+Enemy loses 1 hp, heal 1 hp
