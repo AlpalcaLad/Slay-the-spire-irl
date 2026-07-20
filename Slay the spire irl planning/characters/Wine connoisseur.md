@@ -3,13 +3,13 @@
 Resource, start each combat with minimum 2 swigs of wine. Cards force you to take a sip but you can only play them when you have wine available
 
 **starting cards**
-3x [[strike]]
-3x [[defend]]
-1x [[Grape time]] (add 1 grape to your hand, 0 cost SKILL)
-1x [[fruity aroma]] (draw 3 cards, discard 1, 1 cost SKILL)
+3x [[strike]] X
+3x [[defend]] X
+1x [[Grape time]] (add 1 grape to your hand, 0 cost SKILL) X
+1x [[fruity aroma]] (draw 3 cards, discard 1, 1 cost SKILL) X
 
 misc cards
-grape (1 damage, take 1 sip, exhaust, 0 cost, ATTACK)
+grape (1 damage, take 1 sip, exhaust, 0 cost, ATTACK) X
 
 status
 emotional - Unplayable, take a sip when drawn
@@ -24,9 +24,9 @@ findable cards
 [[bottle it up]] (Gain 3 block, costs 2, SKILL)
 [[Grape dance]] (Gain 3 grapes, Exhaust, costs 1 SKILL)
 [[Cheese board]] (All players draw 1 card and gain 1 block, 2 cost SKILL)
-[[floral aroma]] (Retain, Exhaust all statuses in your hand, 1 cost SKILL)
-[[Herbal aroma]] (whenever you draw a status, draw 1 card, 1 cost POWER)
-[[Mineral aroma]] (Whenever you exhaust a status add a grape to your hand, 1 cost POWER)
+[[floral aroma]] (Retain, Exhaust all statuses in your hand, 1 cost SKILL) X
+[[Herbal aroma]] (whenever you draw a status, draw 1 card, 1 cost POWER) X
+[[Mineral aroma]] (Whenever you exhaust a status add a grape to your hand, 1 cost POWER) X
 [[Pour out heart]] (Add an emotional to your discard pile, gain 2 energy, 0 cost, SKILL)
 [[One more glass]] (Add a dazed to your draw pile, Draw two cards, 1 cost SKILL)
 [[Sommelier]] (Your grapes do 1 additional damage, 1 cost POWER, common)
