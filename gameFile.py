@@ -11,6 +11,8 @@ import keyboard
 import math
 from helperFuncs import *
 
+
+#region Sprite
 class sprite():
     def __init__(self,parent,game,asset):
         self.p = parent
@@ -27,7 +29,8 @@ class sprite():
                 self.p.y + self.y
             ),
         )
-        
+
+#region Buff handler
 class buffHandler():
     def __init__(self):
         self.vulnerable = 0
@@ -60,6 +63,7 @@ class buffHandler():
         if self.frail>0: self.frail -= 1
         self.freeCard = 0
 
+#region Entity
 class entity():
     def __init__(self):
         self.hp = 1
@@ -69,6 +73,7 @@ class entity():
         self.x = 0
         self.y = 0
         self.friendly = False
+        self.energy = -1
 
         self.acting = False
 
@@ -90,6 +95,7 @@ class entity():
         self.hp = 0
         print(self.name + " died")
 
+#region Healthbar
 class healthbar():
     def __init__(self,parent : entity,game,x,y,w,h,r=8):
         self.g = game
@@ -101,6 +107,7 @@ class healthbar():
         self.r = r
 
     def draw(self):
+        #block
         hpBarCol = (20,255,20)
         if self.p.block > 0:
             self.g.screen.blit(
@@ -110,9 +117,10 @@ class healthbar():
                     self.y-13
                 ),
             )
-            drawTextOutlined(self.g,str(self.p.block),(self.x-27,self.y-3),(20,20,100),(255,255,255))
+            drawTextOutlined(self.g,str(self.p.block),(self.x,self.y-3),(20,20,100),(255,255,255))
             hpBarCol = (100,180,255)
 
+        #health
         ratio = self.p.hp / self.p.hpMax
         pygame.draw.rect(self.g.screen,"red",(self.x,self.y,self.w,self.h), border_radius=self.r)
         pygame.draw.rect(self.g.screen,hpBarCol,(self.x,self.y,self.w*ratio,self.h), border_radius=self.r)
@@ -123,9 +131,31 @@ class healthbar():
             (self.x+self.w+14,self.y-3)
         )
 
+        #energy
+        if self.p.energy>0:
+            self.g.screen.blit(
+                self.g.energyAsset,
+                (
+                    self.x+self.w+8,
+                    self.y-43
+                ),
+            )
+            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+40,self.y-33),(100,60,20),(255,255,255))
+        elif self.p.energy==0: #draw dull sprite
+            self.g.screen.blit(
+                self.g.noEnergyAsset,
+                (
+                    self.x+self.w+8,
+                    self.y-43
+                ),
+            )
+            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+40,self.y-33),(80,50,10),(160,160,160))
+
+
 from cards import *
 from enemies import *
 
+#region Player
 class player(entity):
     def __init__(self,className,g):
         super().__init__()
@@ -203,6 +233,7 @@ colours = {
     "white": (255,255,255)
 }
 
+#region Game
 class game():
     def __init__(self):
         #general setup
@@ -227,7 +258,9 @@ class game():
             # sprite(self,self,"./art/backdropGrass.png")
         ]
         c.img = pygame.image.load(c.asset).convert_alpha()
-        self.blockAsset = pygame.transform.scale(pygame.image.load("./art/blockIcon.png").convert_alpha(),(45,45))
+        self.blockAsset = pygame.transform.scale(pygame.image.load("./art/icons/blockIcon.png").convert_alpha(),(45,45))
+        self.energyAsset = pygame.transform.scale(pygame.image.load("./art/icons/energyIcon.png").convert_alpha(),(45,45))
+        self.noEnergyAsset = pygame.transform.scale(pygame.image.load("./art/icons/energylessIcon.png").convert_alpha(),(45,45))
         c.g = self
         iHandler.g = self
 
@@ -289,6 +322,10 @@ class game():
                         p.play(tempText)
 
         elif cardText.startswith("enemy"):
+            for p in self.players: 
+                p.energy = (p.energy + 1) * 2
+                p.block = (p.block + 1) * 2
+
             if len(self.enemies) == 0:
                 self.inCombat = True
 
