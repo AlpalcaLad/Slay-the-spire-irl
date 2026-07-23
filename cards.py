@@ -2,15 +2,19 @@ import random
 import math
 import pygame
 import numpy as np
+from gameFile import entity
+from helperFuncs import *
 
 class context():
+    """Keeps track of who a card comes from and affects"""
     def __init__(self):
-        self.target = None
-        self.source = None
+        self.target : entity = None
+        self.source : entity = None
         self.asset = "./art/marker.png"
         self.offset = 0
 
     def draw(self):
+        #draw the target marker
         if self.target is not None:
             self.offset = (self.offset+0.02)%(2*math.pi)
             self.g.screen.blit(
@@ -21,7 +25,9 @@ class context():
                 )
             )
             
+
 def textMulti(g,textArray,cntr,backbox=True,adjustCenterHeight=False):
+    """Draws multiple lines of text around a center"""
     fnts = []
     stats = []
     height = 0
@@ -62,6 +68,7 @@ def textMulti(g,textArray,cntr,backbox=True,adjustCenterHeight=False):
         curY += s.height+4
 
 class instruction():
+    """An instruction box (optionally affecting a specific player)"""
     def __init__(self,text : list,duration :int=60,target=None,blocking : bool=False):
         self.text = text
         self.target = target
@@ -125,7 +132,7 @@ c = context()
 
 iHandler = instructionHandler()
 
-def getevent(eventName):
+def getevent(eventName : str):
     match eventName:
         case "bus":
             return busEvent()

@@ -57,7 +57,13 @@ class manager():
                             self.oldCards[c]=self.keepFor
 
                 self.awaiting=False
-        self.g.mainloop()
+
+        try:
+            self.g.mainloop()
+        except Exception as e:
+            print(e)
+            #if repeated errors we should auto restart
+
         toRemove = []
         for c in self.oldCards:
             self.oldCards[c]-=1

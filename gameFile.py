@@ -4,12 +4,12 @@ from multiprocessing import Process,Pipe
 import qr_read
 import keyboard
 import os
-from cards import *
 import pygame
 import sys
 import random
 import keyboard
 import math
+from helperFuncs import *
 
 class sprite():
     def __init__(self,parent,game,asset):
@@ -26,27 +26,6 @@ class sprite():
                 self.p.x + self.x,
                 self.p.y + self.y
             ),
-        )
-
-class healthbar():
-    def __init__(self,parent,game,x,y,w,h,r=8):
-        self.g = game
-        self.p = parent
-        self.x = x
-        self.y = y
-        self.w = w
-        self.h = h
-        self.r = r
-
-    def draw(self):
-        ratio = self.p.hp / self.p.hpMax
-        pygame.draw.rect(self.g.screen,"red",(self.x,self.y,self.w,self.h), border_radius=self.r)
-        pygame.draw.rect(self.g.screen,"green",(self.x,self.y,self.w*ratio,self.h), border_radius=self.r)
-        self.g.screen.blit(
-            self.g.font.render(
-                str(self.p.hp)+"/"+str(self.p.hpMax), True, (255,255,255)
-            ),
-            (self.x+self.w+14,self.y-3)
         )
         
 class buffHandler():
@@ -111,6 +90,40 @@ class entity():
         self.hp = 0
         print(self.name + " died")
 
+class healthbar():
+    def __init__(self,parent : entity,game,x,y,w,h,r=8):
+        self.g = game
+        self.p = parent
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.r = r
+
+    def draw(self):
+        hpBarCol = (20,255,20)
+        if self.p.block > 0:
+            self.g.screen.blit(
+                self.g.blockAsset,
+                (
+                    self.x-40,
+                    self.y-13
+                ),
+            )
+            drawTextOutlined(self.g,str(self.p.block),(self.x-27,self.y-3),(20,20,100),(255,255,255))
+            hpBarCol = (100,180,255)
+
+        ratio = self.p.hp / self.p.hpMax
+        pygame.draw.rect(self.g.screen,"red",(self.x,self.y,self.w,self.h), border_radius=self.r)
+        pygame.draw.rect(self.g.screen,hpBarCol,(self.x,self.y,self.w*ratio,self.h), border_radius=self.r)
+        self.g.screen.blit(
+            self.g.font.render(
+                str(self.p.hp)+"/"+str(self.p.hpMax), True, (255,255,255)
+            ),
+            (self.x+self.w+14,self.y-3)
+        )
+
+from cards import *
 from enemies import *
 
 class player(entity):
@@ -214,6 +227,7 @@ class game():
             # sprite(self,self,"./art/backdropGrass.png")
         ]
         c.img = pygame.image.load(c.asset).convert_alpha()
+        self.blockAsset = pygame.transform.scale(pygame.image.load("./art/blockIcon.png").convert_alpha(),(45,45))
         c.g = self
         iHandler.g = self
 
@@ -222,6 +236,7 @@ class game():
         self.enemies: list[enemy] = []
         self.actionQueue = []
         self.playerTurn = True #whether players can play cards
+        self.inCombat = False
 
     def endturn(self):
         for p in self.players:
@@ -274,6 +289,9 @@ class game():
                         p.play(tempText)
 
         elif cardText.startswith("enemy"):
+            if len(self.enemies) == 0:
+                self.inCombat = True
+
             tempText = cardText
             if tempText[-1].isupper():
                 tempText=tempText[:-1]
@@ -357,7 +375,10 @@ class game():
                 self.playerTurn = True
                 for p in self.players:
                     p.startturn()
-                
+
+        #check if all enemies dead and in combat
+        if len(self.enemies)==0 and self.inCombat:
+            pass
         
         #render enemies
         for e in self.enemies:

@@ -134,7 +134,7 @@
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -296,14 +296,14 @@
       "bases:Create new base": false
     }
   },
-  "active": "6084ad7ea20c3d0a",
+  "active": "f23d8cc9e41414a8",
   "lastOpenFiles": [
-    "characters/Cocktail mixer.md",
     "characters/Wine connoisseur.md",
     "characters/Designated driver.md",
+    "core/relics.md",
+    "characters/Cocktail mixer.md",
     "characters/Beer master.md",
     "core/Main concept.md",
-    "core/relics.md",
     "mechanics/buffs and debuffs.md",
     "Spin the bottle.md",
     "mechanics/brew/prosecco.md",
