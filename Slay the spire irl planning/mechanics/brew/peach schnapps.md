@@ -1,1 +1,1 @@
-Enemy loses 1 hp, heal 1 hp
+Apply 3 tipsy

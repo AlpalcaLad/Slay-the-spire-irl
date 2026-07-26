@@ -10,6 +10,10 @@ Starting card makes you drink what you’ve brewed, which has an effect based on
 1x [[lemon up]] (brews shot of lemonade, 0 cost SKILL)
 1x [[Down the hatch]] (drink everything brewed, 2 cost SKILL)
 
+**effects**
+tipsy: when something has 5 tipsy it becomes wasted for one turn
+wasted: take double damage this turn
+
 **findable cards**
 [[Bump the flavour]] (brew splash of [[squash]], costs 1, SKILL, COMMON)
 [[See sunrise]] (brew shot of [[orange juice]], costs 1, SKILL, COMMON)
@@ -17,15 +21,14 @@ Starting card makes you drink what you’ve brewed, which has an effect based on
 [[Schnapp to it]] (brew splash of [[peach schnapps]], costs 1 SKILL)
 [[Bubbly]] (brew splash of [[prosecco]], costs 1 SKILL)
 [[Rumaway]] (brew splash of [[rum]], exhaust costs 2, SKILL, RARE)
-[[Big drink]] (Gain 1 energy for each unique effect in your drink, 2 cost SKILL)
-[[Covered]] (Gain 1 block for each unique effect in your drink, 2 cost SKILL)
-[[Double up]] (Your next brew this turn is doubled, 0 cost SKILL)
-[[Spin the bottle]] (brew two random splashes, 1 cost SKILL)
-[[Roulette]] (Discard your hand, draw that many cards, Exhaust, 0 cost, SKILL) 
+[[Drunken Wallop]] (Deal damage equal to enemies tipsy, 2 cost ATTACK)
+[[Spin the bottle]] (Discard your hand and draw that many cards, 0 cost SKILL)
+[[Roulette]] (50% gain 2 tipsy, 50% apply 2 tipsy, Exhaust, 1 cost, SKILL) 
 [[Heavyweight]] (Whenever you brew, gain 1 block, 2 cost POWER)
-[[The bill]] (Deal 2 damage, costs 1 more for each thing in your cup. Costs 0, ATTACK)
-[[What next]] (Whenever you down the hatch, draw 2 cards, 2 cost, POWER)
+[[The bill]] (Deal 3 damage, can only target wasted enemies. Costs 0, ATTACK)
 [[Taste test]] (Gain 2 energy, take a sip, costs 0, SKILL)
-[[Key ingredients]] (Choose any two skills from your draw pile and add them to your hand, 1 cost, SKILL, RARE)
-[[Final touches]] Put down the hatch in your hand and retain it this turn (costs 1, SKILL)
+[[Key ingredients]] (Choose any two cards from your draw pile and add them to your hand, 1 cost, SKILL, RARE)
 [[Seal of approval]] (Another player tries your drink, gain 2 block and draw a card, 2 cost SKILL)
+[[Keep it flowing]] (Apply 1 tipsy, gain 1 block, draw 1 card, 1 cost SKILL, COMMON)
+[[You me gas station]] (Gain 3 energy, draw 2 cards, gain 1 tipsy each turn, 0 cost POWER)
+[[Get it started]] (If an enemy has no tipsy, apply 4 tipsy, 2 cost SKILL)

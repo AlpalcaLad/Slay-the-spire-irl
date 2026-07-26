@@ -1,1 +1,1 @@
-When drank, deal 2 damage
+When drank, deal 2 damage to a random enemy

@@ -1,1 +1,1 @@
-Gain 1 strength
+Heal 1 hp

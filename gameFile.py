@@ -63,6 +63,12 @@ class buffHandler():
         if self.frail>0: self.frail -= 1
         self.freeCard = 0
 
+    def itemise(self) -> list[tuple[int,pygame.Surface]]:
+        effects = []
+        if self.vulnerable>0:
+            effects.append((self.vulnerable,))
+        return effects
+
 #region Entity
 class entity():
     def __init__(self):
@@ -111,13 +117,13 @@ class healthbar():
         hpBarCol = (20,255,20)
         if self.p.block > 0:
             self.g.screen.blit(
-                self.g.blockAsset,
+                self.g.a.blockAsset,
                 (
                     self.x-40,
                     self.y-13
                 ),
             )
-            drawTextOutlined(self.g,str(self.p.block),(self.x,self.y-3),(20,20,100),(255,255,255))
+            drawTextOutlined(self.g,str(self.p.block),(self.x-10,self.y-3),(20,20,100),(255,255,255))
             hpBarCol = (100,180,255)
 
         #health
@@ -134,22 +140,25 @@ class healthbar():
         #energy
         if self.p.energy>0:
             self.g.screen.blit(
-                self.g.energyAsset,
+                self.g.a.energyAsset,
                 (
                     self.x+self.w+8,
                     self.y-43
                 ),
             )
-            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+40,self.y-33),(100,60,20),(255,255,255))
+            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+30,self.y-33),(100,60,20),(255,255,255))
         elif self.p.energy==0: #draw dull sprite
             self.g.screen.blit(
-                self.g.noEnergyAsset,
+                self.g.a.noEnergyAsset,
                 (
                     self.x+self.w+8,
                     self.y-43
                 ),
             )
-            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+40,self.y-33),(80,50,10),(160,160,160))
+            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+30,self.y-33),(80,50,10),(160,160,160))
+
+        #buffs and debuffs
+
 
 
 from cards import *
@@ -233,6 +242,22 @@ colours = {
     "white": (255,255,255)
 }
 
+#region Asset Holder
+
+class assetHolder():
+    def __init__(self):
+        self.blockAsset = self.load("./art/icons/blockIcon.png")
+        self.energyAsset = self.load("./art/icons/energyIcon.png")
+        self.noEnergyAsset = self.load("./art/icons/energylessIcon.png")
+
+        self.vulnerableAsset = self.load("./art/icons/vulnerableIcon.png")
+        self.weakAsset = self.load("./art/icons/weakIcon.png")
+        self.frailAsset = self.load("./art/icons/frailIcon.png")
+        self.strengthAsset = self.load("./art/icons/strengthIcon.png")
+
+    def load(self,path):
+        return pygame.transform.scale(pygame.image.load(path).convert_alpha(),(45,45))
+
 #region Game
 class game():
     def __init__(self):
@@ -258,9 +283,7 @@ class game():
             # sprite(self,self,"./art/backdropGrass.png")
         ]
         c.img = pygame.image.load(c.asset).convert_alpha()
-        self.blockAsset = pygame.transform.scale(pygame.image.load("./art/icons/blockIcon.png").convert_alpha(),(45,45))
-        self.energyAsset = pygame.transform.scale(pygame.image.load("./art/icons/energyIcon.png").convert_alpha(),(45,45))
-        self.noEnergyAsset = pygame.transform.scale(pygame.image.load("./art/icons/energylessIcon.png").convert_alpha(),(45,45))
+        self.a = assetHolder()
         c.g = self
         iHandler.g = self
 
@@ -322,9 +345,15 @@ class game():
                         p.play(tempText)
 
         elif cardText.startswith("enemy"):
-            for p in self.players: 
-                p.energy = (p.energy + 1) * 2
-                p.block = (p.block + 1) * 2
+            # for p in self.players: 
+            #     p.energy = (p.energy + 1) * 2
+            #     p.block = (p.block + 1) * 2
+            #     iHandler.queue.append(instruction(
+            #         ["draw 2 cards"],
+            #         60,
+            #         p,
+            #         False
+            #     ))
 
             if len(self.enemies) == 0:
                 self.inCombat = True

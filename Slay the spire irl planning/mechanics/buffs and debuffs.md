@@ -3,12 +3,19 @@ strength
 
 Vulnerable
 - Next attack does double damage, reduces by 1
-- Reduces by 1 each turn
+- Reduces by 1 start of each turn
 
 Weak
 - Next attack does half damage, reduces by 1
-- Reduces by 1 each turn
+- Reduces by 1 start of each turn
 
 Frail
 - Next block card does half block, reduces by 1
-- reduces by 1 each turn
+- reduces by 1 start of each turn
+
+Tipsy
+- When you have 5 tipsy become wasted and lose 5 tipsy
+
+Wasted
+- Take double damage
+- reduces by 1 start of each turn
