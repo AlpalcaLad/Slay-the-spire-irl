@@ -1,1 +1,1 @@
-Exhaust up to 2 cards in your hand
+Lose all debuffs, gain 3 tipsy

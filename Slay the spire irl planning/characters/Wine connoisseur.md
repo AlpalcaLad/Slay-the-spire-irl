@@ -29,7 +29,7 @@ findable cards
 [[Mineral aroma]] (Whenever you exhaust a status add a grape to your hand, 1 cost POWER) X
 [[Pour out heart]] (Add an emotional to your discard pile, gain 2 energy, 0 cost, SKILL)
 [[One more glass]] (Add a dazed to your draw pile, Draw two cards, 1 cost SKILL)
-[[Sommelier]] (Your grapes do 1 additional damage, 1 cost POWER, common)
+[[Sommelier]] (Your grapes do 1 additional damage, 1 cost POWER, COMMON)
 [[Grape trap]] (Play all grapes from your exhaust pile, 2 cost SKILL, RARE)
 [[Grapeshot]] (Your grapes now hit all enemies, gain 3 grapes, 2 cost POWER)
 [[Bottle smack]] (Deal 3 damage, exhaust, 1 cost ATTACK)

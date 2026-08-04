@@ -29,6 +29,9 @@ class manager():
         self.elapsedTime = 0
         self.awaiting = False
 
+    def reset(self):
+        self.g = game()
+
     def main(self):
         while True:
             self.elapsedTime=time.time()-self.startTime
@@ -51,6 +54,9 @@ class manager():
                 for c in received:
                     if c is not None:
                         if c not in self.oldCards:
+                            if c == "reset":
+                                self.reset()
+                                break
                             self.gameConn.append(c)
                             self.oldCards[c]=self.keepFor
                         else:

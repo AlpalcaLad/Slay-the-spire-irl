@@ -29,6 +29,7 @@ class reader():
     def readThread(self, conn):
         while True:
             time.sleep(0.01)
+
             imgToProcess = conn.recv()
             if imgToProcess is not None:
                 #start = time.time()

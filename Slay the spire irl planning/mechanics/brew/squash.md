@@ -1,1 +1,1 @@
-when drank, draw 1 card and gain 1 energy
+when drank, gain 2 energy

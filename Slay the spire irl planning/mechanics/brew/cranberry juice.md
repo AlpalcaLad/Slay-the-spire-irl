@@ -1,1 +1,1 @@
-Apply 2 weak
+Exhaust up to 2 cards in your hand

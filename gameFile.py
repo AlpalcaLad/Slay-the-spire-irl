@@ -30,6 +30,23 @@ class sprite():
             ),
         )
 
+#region Asset Holder
+
+class assetHolder():
+    def __init__(self):
+        self.blockAsset = self.load("./art/icons/blockIcon.png")
+        self.energyAsset = self.load("./art/icons/energyIcon.png")
+        self.noEnergyAsset = self.load("./art/icons/energylessIcon.png")
+
+        self.vulnerableAsset = self.load("./art/icons/vulnerableIcon.png")
+        self.weakAsset = self.load("./art/icons/weakIcon.png")
+        self.frailAsset = self.load("./art/icons/frailIcon.png")
+        self.strengthAsset = self.load("./art/icons/strengthIcon.png")
+
+    def load(self,path):
+        return pygame.transform.scale(pygame.image.load(path).convert_alpha(),(45,45))
+
+
 #region Buff handler
 class buffHandler():
     def __init__(self):
@@ -38,11 +55,20 @@ class buffHandler():
         self.frail = 0
         self.strength = 0
         self.tipsy = 0
+        self.wasted = 0
 
         self.permaStrength = 0
 
         #special
         self.store = [] #stored effects
+
+        #powers
+        self.hellsraiser = 0
+        self.grapeVine = 0
+        self.herbAroma = 0
+        self.minAroma = 0
+        self.sommelier = 0
+
 
         self.freeSkill = 0
         self.freeAttack = 0
@@ -56,6 +82,7 @@ class buffHandler():
         self.weak = 0
         self.tipsy = 0
         self.vulnerable = 0
+        self.freeCardNames = []
     
     def startturn(self):
         if self.weak>0: self.weak -= 1
@@ -63,10 +90,17 @@ class buffHandler():
         if self.frail>0: self.frail -= 1
         self.freeCard = 0
 
-    def itemise(self) -> list[tuple[int,pygame.Surface]]:
+    def itemise(self, assets: assetHolder) -> list[tuple[int,pygame.Surface]]:
         effects = []
         if self.vulnerable>0:
-            effects.append((self.vulnerable,))
+            effects.append((self.vulnerable,assets.vulnerableAsset))
+        if self.weak>0:
+            effects.append((self.weak,assets.weakAsset))
+        if self.frail>0:
+            effects.append((self.frail,assets.frailAsset))
+        if self.strength>0:
+            effects.append((self.strength,assets.strengthAsset))
+
         return effects
 
 #region Entity
@@ -190,7 +224,7 @@ class player(entity):
                 self.s = sprite(self,g,"./art/player1Art.png")
                 self.x = 3*self.g.W//5-35
                 self.wine = 0
-            case "designateddriver":
+            case "driver":
                 self.s = sprite(self,g,"./art/player1Art.png")
                 self.x = 4*self.g.W//5-25
             case _:
@@ -242,21 +276,6 @@ colours = {
     "white": (255,255,255)
 }
 
-#region Asset Holder
-
-class assetHolder():
-    def __init__(self):
-        self.blockAsset = self.load("./art/icons/blockIcon.png")
-        self.energyAsset = self.load("./art/icons/energyIcon.png")
-        self.noEnergyAsset = self.load("./art/icons/energylessIcon.png")
-
-        self.vulnerableAsset = self.load("./art/icons/vulnerableIcon.png")
-        self.weakAsset = self.load("./art/icons/weakIcon.png")
-        self.frailAsset = self.load("./art/icons/frailIcon.png")
-        self.strengthAsset = self.load("./art/icons/strengthIcon.png")
-
-    def load(self,path):
-        return pygame.transform.scale(pygame.image.load(path).convert_alpha(),(45,45))
 
 #region Game
 class game():
@@ -283,7 +302,7 @@ class game():
             # sprite(self,self,"./art/backdropGrass.png")
         ]
         c.img = pygame.image.load(c.asset).convert_alpha()
-        self.a = assetHolder()
+        self.a : assetHolder = assetHolder()
         c.g = self
         iHandler.g = self
 
@@ -293,6 +312,9 @@ class game():
         self.actionQueue = []
         self.playerTurn = True #whether players can play cards
         self.inCombat = False
+
+    def reset(self):
+        pass
 
     def endturn(self):
         for p in self.players:
@@ -312,17 +334,17 @@ class game():
         if string=="1":
             return "beermaster"
         elif string=="2":
-            return "cocktailmaker"
+            return "cocktail"
         elif string=="3":
             return "winecon"
         else:
-            return "designateddriver"
+            return "driver"
 
     def readCard(self,cardText: str):
         if cardText == "endturn":
             self.endturn()
 
-        if cardText in ["cocktailmaker","beermaster","winecon","designateddriver"]:
+        if cardText in ["cocktail","beermaster","winecon","driver"]:
             found = False
             for p in self.players:
                 if p.className == cardText:
