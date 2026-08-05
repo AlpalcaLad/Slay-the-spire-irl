@@ -1,10 +1,13 @@
+from dis import Instruction
 import random
 import math
 import pygame
 import numpy as np
 from gameFile import entity
 from helperFuncs import *
+from quizHandler import *
 
+#region context
 class context():
     """Keeps track of who a card comes from and affects"""
     def __init__(self):
@@ -25,9 +28,10 @@ class context():
                 )
             )
 
+#region instruction
 class instruction():
     """An instruction box (optionally affecting a specific player)"""
-    def __init__(self,text : list,duration :int=60,target=None,blocking : bool=False):
+    def __init__(self,text : list,duration :int=60,target=None,blocking : bool=False, options=[]):
         self.text = text
         self.target = target
         self.duration = duration
@@ -35,6 +39,7 @@ class instruction():
         self.g = iHandler.g
         self.border = 30
         self.r = 8
+        self.options = options
 
     def draw(self):
         #can set duration to -1 to make it permenant until proceeding
@@ -52,7 +57,7 @@ class instruction():
             cntr = (self.target.x+32,self.target.y-24)
             textMulti(self.g,self.text,cntr,True,True)
             
-
+#region instruction handler
 class instructionHandler():
     def __init__(self):
         self.queue = []
@@ -134,6 +139,7 @@ class card():
         strength = c.source.b.strength
         weak = c.source.b.weak
         vulnerable = c.target.b.vulnerable
+        wasted = c.target.b.wasted
         
         dmg += strength
         if vulnerable > 0:
@@ -142,6 +148,8 @@ class card():
         if weak > 0:
             dmg = math.floor(dmg / 2)
             c.source.b.weak -= 1
+        if wasted>0:
+            dmg*=2
 
         for t in times:
             c.target.damage(dmg)
@@ -163,6 +171,12 @@ class card():
         iHandler.queue.append(instruction([
             "Card exhausted!"
         ],60,c.source,False))
+
+    def tipsy(self,am):
+        c.target.b.tipsy += am
+        if c.target.b.tipsy >= 5:
+            c.target.b.tipsy.wasted += 1
+            c.target.b.tipsy -= 5
 
 class strike(card):
     def __init__(self):

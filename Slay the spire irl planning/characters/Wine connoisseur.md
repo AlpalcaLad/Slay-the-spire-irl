@@ -18,18 +18,18 @@ dazed - Unplayable, ethereal
 
 findable cards
 [[royal gamble]] (shuffle two dazed into your draw pile, draw 2 cards, 1 cost, SKILL)
-[[snobbery]] (Gain 1 block, apply 2 weak. Add 2 snobbish to your hand, costs 1, SKILL)
-[[Vinyard]] (add 2 grapes to your hand, 1 cost, SKILL, COMMON)
+[[snobbery]] (Gain 2 block, apply 1 weak. Add 2 snobbish to your hand, costs 1, SKILL)
+[[Vinyard]] (add 2 grapes to your hand, 1 cost, SKILL)
 [[Grape vine]] (at the start of each turn, add 1 grape to your hand, 1 cost POWER)
 [[bottle it up]] (Gain 3 block, costs 2, SKILL)
 [[Grape dance]] (Gain 3 grapes, Exhaust, costs 1 SKILL)
 [[Cheese board]] (All players draw 1 card and gain 1 block, 2 cost SKILL)
-[[floral aroma]] (Retain, Exhaust all statuses in your hand, 1 cost SKILL) X
+[[floral aroma]] (Retain, Exhaust all statuses in your hand, 1 cost SKILL, RARE) X
 [[Herbal aroma]] (whenever you draw a status, draw 1 card, 1 cost POWER) X
 [[Mineral aroma]] (Whenever you exhaust a status add a grape to your hand, 1 cost POWER) X
 [[Pour out heart]] (Add an emotional to your discard pile, gain 2 energy, 0 cost, SKILL)
 [[One more glass]] (Add a dazed to your draw pile, Draw two cards, 1 cost SKILL)
 [[Sommelier]] (Your grapes do 1 additional damage, 1 cost POWER, COMMON)
 [[Grape trap]] (Play all grapes from your exhaust pile, 2 cost SKILL, RARE)
-[[Grapeshot]] (Your grapes now hit all enemies, gain 3 grapes, 2 cost POWER)
+[[Grapeshot]] (Your grapes now hit all enemies, gain 3 grapes, 2 cost POWER, RARE)
 [[Bottle smack]] (Deal 3 damage, exhaust, 1 cost ATTACK)

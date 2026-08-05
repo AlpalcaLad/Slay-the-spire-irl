@@ -61,6 +61,7 @@ class buffHandler():
 
         #special
         self.store = [] #stored effects
+        self.drinkSafe = 0
 
         #powers
         self.hellsraiser = 0
@@ -69,10 +70,6 @@ class buffHandler():
         self.minAroma = 0
         self.sommelier = 0
 
-
-        self.freeSkill = 0
-        self.freeAttack = 0
-        self.freePower = 0
         self.freeCard = 0
 
         self.freeCardNames = []
@@ -88,6 +85,7 @@ class buffHandler():
         if self.weak>0: self.weak -= 1
         if self.vulnerable>0: self.vulnerable -= 1
         if self.frail>0: self.frail -= 1
+        if self.wasted>0: self.wasted -= 1
         self.freeCard = 0
 
     def itemise(self, assets: assetHolder) -> list[tuple[int,pygame.Surface]]:
@@ -192,7 +190,20 @@ class healthbar():
             drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+30,self.y-33),(80,50,10),(160,160,160))
 
         #buffs and debuffs
-
+        toDraw = self.p.b.itemise(self.g.a)
+        curX = self.x
+        for e in toDraw:
+            #draw effect
+            drawTextOutlined(self.g,e[0],(curX,self.y+53),(255,255,255),(0,0,0))
+            #blit icon to screen
+            self.g.screen.blit(
+                e[1],
+                (
+                    curX + 35,
+                    self.y+53
+                ),
+            )
+            curX += 75
 
 
 from cards import *
@@ -407,6 +418,42 @@ class game():
                 tempText=tempText[:-1]
 
             iHandler.queue.append(getevent(tempText.replace("event","",1)))
+
+        elif cardText=="pubquiz":
+            #load up pub quiz question
+            quizQ = question()
+            quizT = [quizQ["question"]]
+            correctAns = random.randint(0,3)
+
+            #before correct
+            for i in range(correctAns):
+                quizT.append(quizQ["incorrect_answers"][i]+f"({i+1})")
+            #correct
+            quizT.append(quizQ["correct_answer"])+f"({correctAns+1})"
+            #after correct
+            for i in range(correctAns+1,4):
+                quizT.append(quizQ["incorrect_answers"][i]+f"({i+1})")
+
+            rewards = [
+                instruction(
+                    ["Incorrect! The answer was "+quizQ["correct_answer"],"You move on a failiure..."],
+                    120,None,True
+                )for i in range(4)
+            ]
+
+            rewards[correctAns]=instruction(
+                ["Correct! You recieve 3 gold as a reward."]
+            )
+            iHandler.queue.append(instruction(
+                quizT,-1,None,True,rewards
+            ))
+
+
+        elif len(cardText)==2: #pub quiz answer
+            if len(iHandler.active)>0 and len(iHandler.active[0].options)>=int(cardText[1]):
+                #answer question
+                iHandler.queue.append(iHandler.active[0].options[int(cardText[1])])
+                iHandler.active[0].duration=0
 
         #print("Read card ",cardText)
         return

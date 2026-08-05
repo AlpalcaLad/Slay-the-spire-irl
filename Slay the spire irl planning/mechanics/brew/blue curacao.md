@@ -1,0 +1,1 @@
+Gain 1 strength, gain 2 tipsy

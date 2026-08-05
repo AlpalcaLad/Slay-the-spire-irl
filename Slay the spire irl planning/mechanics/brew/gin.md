@@ -1,0 +1,1 @@
+Deal 1 damage at the start of your turn
