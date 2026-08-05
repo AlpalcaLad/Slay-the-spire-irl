@@ -153,6 +153,7 @@ qrcodes = [
     "a2",
     "a3",
     "a4",
+    #relics
 ]
 
 A4pages = []
