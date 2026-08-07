@@ -40,6 +40,7 @@ qrcodes = [
     "reset",
     "killall",
     "remove",
+    "togglepvp",
     #cocktail mixer cards
     "clearstrng2",
     "lemonup2",
@@ -153,7 +154,7 @@ qrcodes = [
     "a2",
     "a3",
     "a4",
-    #relics
+    #potions
 ]
 
 A4pages = []
@@ -184,10 +185,10 @@ for t in qrcodes:
     overlay(A4image,imToOverlay,x,y,caption=t)
     blankPage = False
     x+=imToOverlay.shape[0]+offset
-    if x > 3508 - 20 - imToOverlay.shape[0]:
-        x = 20
+    if x > 3508 - border - imToOverlay.shape[0]:
+        x = border
         y += imToOverlay.shape[1]+offset
-        if y > 2480 - 20 - imToOverlay.shape[1]:
+        if y > 2480 - border - imToOverlay.shape[1]:
             #new page
             A4pages.append(A4image)
             A4image = np.ones((2480,3508,3),dtype=np.uint8)*255
