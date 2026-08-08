@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
 
-cards = [ # art, name, energy, description
+cards = [ # art, name, type, energy, description
     #("./cards/",1,"",[""]),
-    ("./art/cards/grape_dance.png","Grape Dance", 1,["Add 3 [grape]s","exhaust"]) for x in range(14)
+    ("./art/cards/grape_dance.png","Grape Dance", "skill", 1,["Add 3 [grape]s","exhaust"]) for x in range(14)
 ]
 
 from PIL import Image, ImageDraw, ImageFont
@@ -32,10 +32,22 @@ def overlay(img: cv2.typing.MatLike,subimg: cv2.typing.MatLike,x: int,y: int,cap
         tSize, _ = cv2.getTextSize(caption,cv2.FONT_HERSHEY_SIMPLEX,1,2)
         cv2.putText(img,caption,(x+s[0]//2-tSize[0]//2,y+s[1]+35),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,0),2)
 
-def placeCard(img:cv2.typing.MatLike, card: cv2.typing.MatLike,x:int,y:int,name:str,energy:int,description:list[str]):
+def placeCard(img:cv2.typing.MatLike, card: cv2.typing.MatLike,x:int,y:int,name:str,ctype:str,energy:int,description:list[str]):
     overlay(img,card,x,y)
-    
+
+    #energy
     img = putTextPIL(img,str(energy),(x+60,y+30),80,(255,255,255),True,(0,0,0))
+
+    #name
+    font = ImageFont.truetype("./misc/kreon.ttf",60)
+    img = putTextPIL(img,name,(x+340-font.getmask(name).getbbox()[2]//2,y+70),60,(255,255,255),True,(0,0,0))
+
+    #type
+    font = ImageFont.truetype("./misc/kreon.ttf",45)
+    img = putTextPIL(img,ctype,(x+345-font.getmask(ctype).getbbox()[2]//2,y+480),45,(255,255,255),True,(0,0,0))
+
+    #description
+    
 
     return img
 
@@ -54,7 +66,7 @@ for c in cards:
         negBorderX:card.shape[1]-negBorderX,
     ] #crop
 
-    A4image = placeCard(A4image,card,x,y,c[1],c[2],c[3])
+    A4image = placeCard(A4image,card,x,y,c[1],c[2],c[3],c[4])
 
     blankPage = False
     x+=card.shape[1]+offset
