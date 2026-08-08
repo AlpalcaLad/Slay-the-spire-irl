@@ -315,6 +315,7 @@ class game():
         c.img = pygame.image.load(c.asset).convert_alpha()
         self.a : assetHolder = assetHolder()
         c.g = self
+        self.c = c
         iHandler.g = self
 
         #gameplay definition

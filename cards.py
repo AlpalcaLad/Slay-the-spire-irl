@@ -146,7 +146,7 @@ class card():
             dmg *= 2
             c.target.b.vulnerable -= 1
         if weak > 0:
-            dmg = math.floor(dmg / 2)
+            dmg = dmg // 2
             c.source.b.weak -= 1
         if wasted>0:
             dmg*=2
@@ -157,15 +157,21 @@ class card():
     def protect(self):
         blk = self.block
 
-        if self.frail > 0:
-            blk = math.floor(blk / 2)
+        frail = c.source.b.frail
+        if frail > 0:
+            blk = blk // 2
+            c.source.b.frail -= 1
 
         c.target.block += blk
     
     def sip(self):
-        iHandler.queue.append(instruction([
-            "take "+str(self.sips)+" sips!"
-        ],60,c.source,False))
+        if self.sips > 0:
+            c.source.b.drinkSafe -= self.sips
+            if c.source.b.drinkSafe < 0:
+                c.source.b.drinkSafe = 0
+                iHandler.queue.append(instruction([
+                    "take "+str(self.sips)+" sips!"
+                ],60,c.source,False))
 
     def exhaust(self):
         iHandler.queue.append(instruction([
