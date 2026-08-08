@@ -154,7 +154,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "Files"
@@ -299,8 +301,8 @@
   "active": "cb594f4c4854dfa6",
   "lastOpenFiles": [
     "characters/Designated driver.md",
-    "characters/Cocktail mixer.md",
     "characters/Wine connoisseur.md",
+    "characters/Cocktail mixer.md",
     "characters/Beer master.md",
     "mechanics/buffs and debuffs.md",
     "events.md",

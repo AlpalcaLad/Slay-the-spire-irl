@@ -3,7 +3,16 @@ import numpy as np
 
 cards = [ # art, name, type, energy, description
     #("./cards/",1,"",[""]),
-    ("./art/cards/grape_dance.png","Grape Dance", "skill", 1,["Add 3 [grape]s","exhaust"]) for x in range(14)
+    # Wine connoisseur
+    ("./art/cards/strike_wine.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
+    ("./art/cards/defend_wine.png","Defend", "skill", 1,["Gain 1 $Block$"]),
+    ("./art/cards/grape_time.png","Grape Time", "skill", 0,["Add 1 $Grape$"]),
+    ("./art/cards/fruity_aroma.png","Fruity Aroma", "skill", 1,["$Draw$3 cards", "$Discard$1 card"]),
+    ("./art/cards/royal_gamble.png","Royal Gamble", "skill", 0,["Shuffle 2 $Dazed$","into draw pile", "gain 2 $energy$"]),
+    ("./art/cards/snobbery.png","Snobbery", "skill", 2,["Gain 2 $block$","apply 1 $weak$", "Add 2 snobbish"]),
+    ("./art/cards/grape_dance.png","Grape Dance", "skill", 1,["Add 3 $Grapes$","$Exhaust$"]),
+    ("./art/cards/bottle_smack.png","Bottle Smack", "attack", 1,["Deal 3 $Damage$","$Exhaust$"]),
+    ("./art/cards/grape_shot.png","Grape Shot", "power", 1,["$Grapes$hit all enemies","Add 3 $Grapes$"]),
 ]
 
 from PIL import Image, ImageDraw, ImageFont
@@ -41,11 +50,28 @@ def overlay(img: cv2.typing.MatLike,subimg: cv2.typing.MatLike,x: int,y: int,cap
         tSize, _ = cv2.getTextSize(caption,cv2.FONT_HERSHEY_SIMPLEX,1,2)
         cv2.putText(img,caption,(x+s[0]//2-tSize[0]//2,y+s[1]+35),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,0),2)
 
+def putTextPlus(img,objs,pos,size):
+    font = ImageFont.truetype("./misc/kreon.ttf",size)
+    hSize = 0
+    x = pos[0]
+    for o in objs: #(type="str"|"img",string|image, c1, c2)
+        if o[0]=="str":
+            hSize = font.getmask(o[1]).getbbox()[2]
+            img=putTextPIL(img,o[1],(x,pos[1]),size,o[2],True,o[3])
+            x += hSize + 16
+        elif o[0]=="img": 
+            raise NotImplementedError("Image handling not defined in description writing")
+        else:
+            raise Exception("Invalid arguments passed to putTextPlus: ",o)
+
+    return img
+
 def placeCard(img:cv2.typing.MatLike, card: cv2.typing.MatLike,x:int,y:int,name:str,ctype:str,energy:int,description:list[str]):
     overlay(img,card,x,y)
 
     #energy
-    img = putTextPIL(img,str(energy),(x+60,y+30),80,(255,255,255),True,(0,0,0))
+    font = ImageFont.truetype("./misc/kreon.ttf",80)
+    img = putTextPIL(img,str(energy),(x+70-font.getmask(str(energy)).getbbox()[2]//2,y+30),80,(255,255,255),True,(0,0,0))
 
     #name
     font = ImageFont.truetype("./misc/kreon.ttf",60)
@@ -56,7 +82,29 @@ def placeCard(img:cv2.typing.MatLike, card: cv2.typing.MatLike,x:int,y:int,name:
     img = putTextPIL(img,ctype,(x+345-font.getmask(ctype).getbbox()[2]//2,y+480),45,(255,255,255),True,(0,0,0))
 
     #description
-
+    font = ImageFont.truetype("./misc/kreon.ttf",55)
+    for d in description:
+        keyword = False
+        bbox = font.getmask(d.replace("$","")).getbbox()
+        tempString = ""
+        strings = []
+        for c in d:
+            if c=="$":
+                if tempString != "":
+                    strings.append(("str",tempString,(255,255,0) if keyword else (255,255,255),(0,0,0)))
+                    tempString = ""
+                keyword = not keyword
+            else:
+                tempString = tempString + c
+        if tempString != "":
+            strings.append(("str",tempString,(255,255,0) if keyword else (255,255,255),(0,0,0)))
+        img=putTextPlus(
+            img,
+            strings,
+            (x+345-bbox[2]//2, y + 560),
+            55
+        )
+        y += bbox[3]+16
 
     return img
 
