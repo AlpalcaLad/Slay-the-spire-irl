@@ -8,6 +8,15 @@ cards = [ # art, name, type, energy, description
 
 from PIL import Image, ImageDraw, ImageFont
 
+def get_text_dimensions(text_string, font):
+    # https://stackoverflow.com/a/46220683/9263761
+    ascent, descent = font.getmetrics()
+
+    text_width = font.getmask(text_string).getbbox()[2]
+    text_height = font.getmask(text_string).getbbox()[3] + descent
+
+    return (text_width, text_height)
+
 def putTextPIL(img,text,pos,size,colour,outline=True,outlineColour=(0,0,0)):
     img = Image.fromarray(cv2.cvtColor(img,cv2.COLOR_BGR2RGB))
     font = ImageFont.truetype("./misc/kreon.ttf",size)
@@ -47,7 +56,7 @@ def placeCard(img:cv2.typing.MatLike, card: cv2.typing.MatLike,x:int,y:int,name:
     img = putTextPIL(img,ctype,(x+345-font.getmask(ctype).getbbox()[2]//2,y+480),45,(255,255,255),True,(0,0,0))
 
     #description
-    
+
 
     return img
 
