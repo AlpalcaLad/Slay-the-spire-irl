@@ -113,6 +113,8 @@ def busEvent():
         blocking=True
     )
 
+#region cards
+
 def getcard(cardName):
     match cardName:
         case "strike":
@@ -186,6 +188,8 @@ class card():
             c.target.b.tipsy.wasted += 1
             c.target.b.tipsy -= 5
 
+#region strike
+
 class strike(card):
     def __init__(self):
         super().__init__()
@@ -195,3 +199,14 @@ class strike(card):
 
     def play(self):
         self.damage()
+
+class defend(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.block = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        self.protect()

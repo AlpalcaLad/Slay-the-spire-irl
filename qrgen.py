@@ -101,6 +101,7 @@ qrcodes = [
     "splitg1",
     "hellsraise1",
     "tackychun1",
+    "finisher1",
     #wine connosieur cards
     "grapetime3",
     "fruitarom3",
@@ -155,6 +156,21 @@ qrcodes = [
     "a3",
     "a4",
     #potions
+    "potWeak",
+    "potStrength",
+    "potDraw",
+    "potVuln",
+    "potTipsy",
+    "potSafe",
+    "potEnergy",
+    "potExhaust",
+    "potDamage",
+    "potRMaxHP",
+    "potRStrength",
+    "PotRDamage",
+    "potRScore",
+    "potRStun",
+    "potRRemove"
 ]
 
 A4pages = []
@@ -203,7 +219,18 @@ if not blankPage:
 #         A4image, (0,0), fx=0.4,fy=0.4
 #     )
 # )
+
+# pdfPath = "./testdata/QRcodes.pdf"
+# from PIL import Image
+# images = []
+
 for i in range(len(A4pages)):
     cv2.imwrite("./testdata/QRcodes"+str(i)+".png",A4pages[i])
+    # cv2.imwrite("./testdata/QRcodes"+str(i)+".png",cv2.rotate(A4pages[i],cv2.ROTATE_90_CLOCKWISE))
+    # images.append(Image.open("./testdata/QRcodes"+str(i)+".png"))
 #cv2.waitKey(0)
 cv2.destroyAllWindows()
+
+# images[0].save(
+#     pdfPath, "PDF" ,resolution=100.0, save_all=True, append_images=images[1:]
+# )

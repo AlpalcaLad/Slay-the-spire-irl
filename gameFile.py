@@ -339,8 +339,11 @@ class game():
         self.playerTurn = True #whether players can play cards
         self.inCombat = False
 
+        self.startTime = time.time()
+
     def reset(self):
-        pass
+        self.startTime = time.time()
+        raise NotImplementedError("Reset is currently handled at main.py level...")
 
     def endturn(self):
         for p in self.players:
@@ -382,7 +385,7 @@ class game():
                 self.players.append(p)
                 c.target = p
 
-        elif cardText[-1] in ["1","2","3","4"]:
+        elif len(cardText)>2 and cardText[-1] in ["1","2","3","4"]:
             charName = self.mapToChar(cardText[-1])
             for p in self.players:
                 if p.className == charName:
@@ -463,6 +466,9 @@ class game():
                 quizT,-1,None,True,rewards
             ))
 
+        elif cardText.startswith("pot"):
+            #potions
+            pass
 
         elif len(cardText)==2: #pub quiz answer
             if len(iHandler.active)>0 and len(iHandler.active[0].options)>=int(cardText[1]):
