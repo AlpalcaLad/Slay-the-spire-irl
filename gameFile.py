@@ -220,6 +220,7 @@ class player(entity):
         self.y = self.g.H-250
         self.energyMax = 3
         self.energy = 0
+        self.friendly = True
 
         match className: #setup player class
             case "cocktailmaker":
@@ -252,6 +253,19 @@ class player(entity):
             return
         
         cardToPlay = getcard(cardText)
+
+        #playing harmful card targetted at player
+        if cardToPlay.harmful and c.target.friendly:
+            iHandler.queue.append(instruction([
+                "Cannot harm another player!"
+            ],60,c.source,False))
+
+        #playing helping card targetted at enemy
+        if not cardToPlay.harmful and not cardToPlay.selfTarget and not c.target.friendly:
+            iHandler.queue.append(instruction([
+                "Cannot help an enemy!"
+            ],60,c.source,False))
+
         cost = cardToPlay.cost
 
         if self.b.freeCard > 0: #e.g. "next card you play is free"

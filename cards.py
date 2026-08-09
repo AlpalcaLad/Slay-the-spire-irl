@@ -126,6 +126,8 @@ class card():
         self.block = 0
         self.cost = 0
         self.sips = 0
+        self.harmful = False
+        self.selfTarget = False
 
     def play(self):
         pass
@@ -189,6 +191,7 @@ class strike(card):
         super().__init__()
         self.cost = 1
         self.dmg = 1
+        self.harmful = True
 
     def play(self):
         self.damage()
