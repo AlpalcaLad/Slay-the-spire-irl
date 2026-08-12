@@ -5,7 +5,6 @@ import pygame
 import numpy as np
 from gameFile import entity
 from helperFuncs import *
-from quizHandler import *
 
 #region context
 class context():
@@ -119,6 +118,8 @@ def getcard(cardName):
     match cardName:
         case "strike":
             return strike()
+        case "defend":
+            return defend()
         case _:
             return card()
 
@@ -155,7 +156,7 @@ class card():
         if wasted>0:
             dmg*=2
 
-        for t in times:
+        for t in range(times):
             c.target.damage(dmg)
     
     def protect(self):

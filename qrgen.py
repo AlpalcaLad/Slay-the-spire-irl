@@ -191,10 +191,10 @@ def cvSegno(text):
     )
     return cv2.cvtColor(mat,cv2.COLOR_GRAY2BGR)
 
-border = 20
+border = 120
 x = border
 y = border
-offset = 100
+offset = 75
 blankPage = True
 for t in qrcodes:
     imToOverlay = cvSegno(t)

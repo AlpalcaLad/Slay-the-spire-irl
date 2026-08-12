@@ -10,4 +10,4 @@ def question():
     if len(data)<=0:
         response = requests.get(API_URL)
         data = json.loads(response.text)["results"]
-    yield data.pop(0)
+    return data.pop(0)

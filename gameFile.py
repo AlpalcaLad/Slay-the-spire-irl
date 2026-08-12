@@ -10,14 +10,17 @@ import random
 import keyboard
 import math
 from helperFuncs import *
-
+import json
+import requests
 
 #region Sprite
 class sprite():
-    def __init__(self,parent,game,asset):
+    def __init__(self,parent,game,asset,scale=100):
         self.p = parent
         self.g = game
         self.img = pygame.image.load(asset).convert_alpha()
+        if scale != 100:
+            self.img = pygame.transform.scale(self.img,(scale,scale))
         self.x = 0
         self.y = 0
 
@@ -34,22 +37,38 @@ class sprite():
 
 class assetHolder():
     def __init__(self):
-        self.blockAsset = self.load("./art/icons/blockIcon.png")
+        #self.blockAsset = self.load("./art/icons/blockIcon.png")
         self.energyAsset = self.load("./art/icons/energyIcon.png")
         self.noEnergyAsset = self.load("./art/icons/energylessIcon.png")
 
-        self.vulnerableAsset = self.load("./art/icons/vulnerableIcon.png")
-        self.weakAsset = self.load("./art/icons/weakIcon.png")
-        self.frailAsset = self.load("./art/icons/frailIcon.png")
-        self.strengthAsset = self.load("./art/icons/strengthIcon.png")
+        self.vulnerableAsset = self.load("./art/icons/vulnerableIcon.png",25)
+        self.weakAsset = self.load("./art/icons/weakIcon.png",25)
+        self.frailAsset = self.load("./art/icons/frailIcon.png",25)
+        self.strengthAsset = self.load("./art/icons/strengthIcon.png",25)
 
-    def load(self,path):
-        return pygame.transform.scale(pygame.image.load(path).convert_alpha(),(45,45))
+        self.attackAsset = self.load("./art/icons/attackingIcon.png",35)
+        self.beerAsset = self.load("./art/icons/beerIcon.png")
+        self.asleepAsset = self.load("./art/icons/asleepIcon.png")
+        self.blockAsset = self.load("./art/icons/defendIcon.png")
+        self.buffAsset = self.load("./art/icons/buffIcon.png")
+        self.debuffAsset = self.load("./art/icons/debuffIcon.png")
+        self.mysteryAsset = self.load("./art/icons/mysteryIcon.png")
+        self.stunAsset = self.load("./art/icons/stunnedIcon.png")
+        self.attackDefendAsset = self.load("./art/icons/attackDefendIcon.png",35)
+
+        self.ritualAsset = self.load("./art/icons/ritualIcon.png")
+        self.thornsAsset = self.load("./art/icons/thornsIcon.png")
+        self.platingAsset = self.load("./art/icons/platingIcon.png",25)
+
+    def load(self,path,scale = 45):
+        return pygame.transform.scale(pygame.image.load(path).convert_alpha(),(scale,scale))
 
 
 #region Buff handler
 class buffHandler():
-    def __init__(self):
+    def __init__(self,p):
+        self.p = p
+
         self.vulnerable = 0
         self.weak = 0
         self.frail = 0
@@ -70,6 +89,9 @@ class buffHandler():
         self.minAroma = 0
         self.sommelier = 0
 
+        self.ritual = 0
+        self.plating = 0
+
         self.freeCard = 0
 
         self.freeCardNames = []
@@ -86,18 +108,26 @@ class buffHandler():
         if self.vulnerable>0: self.vulnerable -= 1
         if self.frail>0: self.frail -= 1
         if self.wasted>0: self.wasted -= 1
+        if self.ritual>0: self.strength += self.ritual
+        if self.plating>0:
+            self.p.block += self.plating
+            self.plating-=1
         self.freeCard = 0
 
     def itemise(self, assets: assetHolder) -> list[tuple[int,pygame.Surface]]:
         effects = []
         if self.vulnerable>0:
-            effects.append((self.vulnerable,assets.vulnerableAsset))
+            effects.append((str(self.vulnerable),assets.vulnerableAsset))
         if self.weak>0:
-            effects.append((self.weak,assets.weakAsset))
+            effects.append((str(self.weak),assets.weakAsset))
         if self.frail>0:
-            effects.append((self.frail,assets.frailAsset))
+            effects.append((str(self.frail),assets.frailAsset))
         if self.strength>0:
-            effects.append((self.strength,assets.strengthAsset))
+            effects.append((str(self.strength),assets.strengthAsset))
+        if self.ritual>0:
+            effects.append((str(self.ritual),assets.ritualAsset))
+        if self.plating>0:
+            effects.append((str(self.plating),assets.platingAsset))
 
         return effects
 
@@ -116,7 +146,7 @@ class entity():
         self.acting = False
 
         #buffs and debuffs
-        self.b = buffHandler()
+        self.b = buffHandler(self)
 
     def damage(self,dmg):
         blockAm = min(dmg,self.block)
@@ -124,7 +154,7 @@ class entity():
 
         dmg -= blockAm
         if dmg > 0:
-            hp -= dmg
+            self.hp -= dmg
 
         if self.hp <= 0:
             self.die()
@@ -159,7 +189,7 @@ class healthbar():
             hpBarCol = (100,180,255)
 
         #health
-        ratio = self.p.hp / self.p.hpMax
+        ratio = self.p.hp / max(1,self.p.hpMax)
         pygame.draw.rect(self.g.screen,"red",(self.x,self.y,self.w,self.h), border_radius=self.r)
         pygame.draw.rect(self.g.screen,hpBarCol,(self.x,self.y,self.w*ratio,self.h), border_radius=self.r)
         self.g.screen.blit(
@@ -178,7 +208,7 @@ class healthbar():
                     self.y-43
                 ),
             )
-            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+30,self.y-33),(100,60,20),(255,255,255))
+            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+42,self.y-38),(100,60,20),(255,255,255))
         elif self.p.energy==0: #draw dull sprite
             self.g.screen.blit(
                 self.g.a.noEnergyAsset,
@@ -187,23 +217,23 @@ class healthbar():
                     self.y-43
                 ),
             )
-            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+30,self.y-33),(80,50,10),(160,160,160))
+            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+42,self.y-38),(80,50,10),(160,160,160))
 
         #buffs and debuffs
         toDraw = self.p.b.itemise(self.g.a)
         curX = self.x
         for e in toDraw:
             #draw effect
-            drawTextOutlined(self.g,e[0],(curX,self.y+53),(255,255,255),(0,0,0))
+            drawTextOutlined(self.g,e[0],(curX,self.y+23),(255,255,255),(0,0,0))
             #blit icon to screen
             self.g.screen.blit(
                 e[1],
                 (
-                    curX + 35,
-                    self.y+53
+                    curX,
+                    self.y+23
                 ),
             )
-            curX += 75
+            curX += 50
 
 
 from cards import *
@@ -218,25 +248,35 @@ class player(entity):
         self.friendly = True
         self.g : game = g
         self.y = self.g.H-250
+
+        self.baseY = self.y
+        self.vsp = 0
+        self.grv = 0.2
+
         self.energyMax = 3
-        self.energy = 0
+        self.energy = self.energyMax
         self.friendly = True
 
+        self.awaitingCard = None
+
         match className: #setup player class
-            case "cocktailmaker":
-                self.hp=100
+            case "cocktail":
+                self.hp=10
                 self.deck = []
                 self.s = sprite(self,g,"./art/player1Art.png")
                 self.x = 2*self.g.W//5-55
                 self.hatchEffects = []
             case "beermaster":
+                self.hp=10
                 self.s = sprite(self,g,"./art/player1Art.png")
                 self.x = 1*self.g.W//5-45
             case "winecon":
+                self.hp=10
                 self.s = sprite(self,g,"./art/player1Art.png")
                 self.x = 3*self.g.W//5-35
                 self.wine = 0
             case "driver":
+                self.hp=10
                 self.s = sprite(self,g,"./art/player1Art.png")
                 self.x = 4*self.g.W//5-25
             case _:
@@ -281,10 +321,22 @@ class player(entity):
             ],120,self,False))
         else:
             self.energy-=cost
-            cardToPlay.play()
+            self.vsp = -6
+            self.awaitingCard = cardToPlay
         
 
     def draw(self):
+        if self.vsp != 0:
+            if self.y + self.vsp >= self.baseY:
+                self.y = self.baseY
+                self.vsp = 0
+                if self.awaitingCard is not None:
+                    c.source = self
+                    self.awaitingCard.play()
+            else:
+                self.y += self.vsp
+                self.vsp += self.grv
+
         self.s.draw()
         self.h.draw()
 
@@ -308,6 +360,11 @@ class game():
         #general setup
         self.run = True
         self.cardsToBePlayed = []
+
+        self.API_URL = "https://opentdb.com/api.php?amount=50&category=22"
+        self.response = requests.get(self.API_URL)
+        self.data = json.loads(self.response.text)["results"]
+
         #basic pygame setup
         pygame.init()
         self.W, self.H = 1200, 900
@@ -331,6 +388,7 @@ class game():
         c.g = self
         self.c = c
         iHandler.g = self
+        self.iHandler = iHandler
 
         #gameplay definition
         self.players: list[player] = []
@@ -340,6 +398,15 @@ class game():
         self.inCombat = False
 
         self.startTime = time.time()
+
+    def question(self):
+        qVal = None
+        while qVal is None or len(qVal["incorrect_answers"])<3 or qVal["difficulty"] not in ["easy","medium"] or len(qVal["question"])>50:
+            if len(self.data)<=0:
+                self.response = requests.get(self.API_URL)
+                self.data = json.loads(self.response.text)["results"]
+            qVal = self.data.pop(0)
+        return qVal
 
     def reset(self):
         self.startTime = time.time()
@@ -394,8 +461,8 @@ class game():
                         p.play(tempText[:-1])
                     else:
                         p.play(tempText)
-
-        elif cardText.startswith("enemy"):
+        
+        elif getenemy(cardText) is not None or getenemy(cardText[:-1]) is not None:
             # for p in self.players: 
             #     p.energy = (p.energy + 1) * 2
             #     p.block = (p.block + 1) * 2
@@ -439,28 +506,29 @@ class game():
 
         elif cardText=="pubquiz":
             #load up pub quiz question
-            quizQ = question()
+            quizQ = self.question()
             quizT = [quizQ["question"]]
             correctAns = random.randint(0,3)
 
             #before correct
             for i in range(correctAns):
-                quizT.append(quizQ["incorrect_answers"][i]+f"({i+1})")
+                quizT.append(quizQ["incorrect_answers"][i]+f" ({i+1})")
             #correct
-            quizT.append(quizQ["correct_answer"])+f"({correctAns+1})"
+            quizT.append(quizQ["correct_answer"]+f" ({correctAns+1})")
             #after correct
             for i in range(correctAns+1,4):
-                quizT.append(quizQ["incorrect_answers"][i]+f"({i+1})")
+                quizT.append(quizQ["incorrect_answers"][i-1]+f" ({i+1})")
 
             rewards = [
                 instruction(
                     ["Incorrect! The answer was "+quizQ["correct_answer"],"You move on a failiure..."],
-                    120,None,True
+                    240,None,True
                 )for i in range(4)
             ]
 
             rewards[correctAns]=instruction(
-                ["Correct! You recieve 3 gold as a reward."]
+                ["Correct! You recieve 3 gold as a reward."],
+                200, None, True
             )
             iHandler.queue.append(instruction(
                 quizT,-1,None,True,rewards
@@ -473,10 +541,11 @@ class game():
         elif len(cardText)==2: #pub quiz answer
             if len(iHandler.active)>0 and len(iHandler.active[0].options)>=int(cardText[1]):
                 #answer question
+                #print(cardText[1],iHandler.active[0].options[int(cardText[1])].text)
                 iHandler.queue.append(iHandler.active[0].options[int(cardText[1])])
                 iHandler.active[0].duration=0
 
-        #print("Read card ",cardText)
+        print("Read card ",cardText)
         return
 
     def setup(self):

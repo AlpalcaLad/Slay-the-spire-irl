@@ -108,7 +108,7 @@ def placeCard(img:cv2.typing.MatLike, card: cv2.typing.MatLike,x:int,y:int,name:
 
     return img
 
-border = 0
+border = 60
 negBorderX = 80
 negBorderY = 140
 x = border
