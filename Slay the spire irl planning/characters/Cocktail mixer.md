@@ -28,6 +28,6 @@ wasted: take double damage this turn
 [[Ride the bus]] (Apply 1 tipsy, 2 more for already tipsy targets. Costs 1, SKILL)
 [[Taste test]] (Gain 2 energy, take a sip, costs 0, SKILL)
 [[Key ingredients]] (Choose any two cards from your draw pile and add them to your hand, 1 cost, SKILL, RARE)
-[[Seal of approval]] (Another player tries your drink, gain 2 block and draw a card, 2 cost SKILL)
+[[Seal of approval]] (Another player tries your drink, both draw 3 cards, exhaust, 1 cost SKILL)
 [[Keep it flowing]] (Apply 1 tipsy, gain 1 block, draw 1 card, 1 cost SKILL, COMMON)
 [[Get it started]] (If an enemy has no tipsy, apply 4 tipsy, 2 cost SKILL)

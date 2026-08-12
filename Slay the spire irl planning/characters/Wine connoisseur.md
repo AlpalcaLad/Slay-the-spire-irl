@@ -33,3 +33,6 @@ findable cards
 [[Grape trap]] (Play all grapes from your exhaust pile, 2 cost SKILL, RARE)
 [[Grapeshot]] (Your grapes now hit all enemies, gain 3 grapes, 2 cost POWER, RARE)
 [[Bottle smack]] (Deal 3 damage, exhaust, 1 cost ATTACK)
+
+POSSIBLE EXTRA
+[[Vacuum Seal]] (Gain 1 buffer, exhaust, 1 cost SKILL)

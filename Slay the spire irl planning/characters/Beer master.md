@@ -27,3 +27,5 @@ Findable cards
 
 POSSIBLE
 [[Slurred words]] (Deal 1 damage, if you've drank this turn attacks again, 1 cost ATTACK)
+[[Break the seal]] (Draw until you have 10 cards, exhaust, 1 cost, SKILL)
+[[Beer belly]] (If you've drank this turn, gain 3 block, 2 cost, SKILL)

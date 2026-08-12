@@ -112,15 +112,21 @@ class buffHandler():
         self.freeCardNames = []
     
     def startturn(self):
-        if self.weak>0: self.weak -= 1
-        if self.vulnerable>0: self.vulnerable -= 1
-        if self.frail>0: self.frail -= 1
-        if self.wasted>0: self.wasted -= 1
+        # if self.weak>0: self.weak -= 1
+        # if self.vulnerable>0: self.vulnerable -= 1
+        # if self.frail>0: self.frail -= 1
+        # if self.wasted>0: self.wasted -= 1
         if self.ritual>0: self.strength += self.ritual
         if self.plating>0:
             self.p.block += self.plating
             self.plating-=1
         self.freeCard = 0
+
+    def endturn(self):
+        if self.weak>0: self.weak -= 1
+        if self.vulnerable>0: self.vulnerable -= 1
+        if self.frail>0: self.frail -= 1
+        if self.wasted>0: self.wasted -= 1
 
     def itemise(self, assets: assetHolder) -> list[tuple[int,pygame.Surface]]:
         effects = []
@@ -337,8 +343,11 @@ class player(entity):
             ],120,self,False))
         else:
             self.energy-=cost
-            self.vsp = -6
-            self.awaitingCard = cardToPlay
+            if cardToPlay.dmg > 0:
+                self.vsp = -6
+                self.awaitingCard = cardToPlay
+            else:
+                cardToPlay.play()
         
 
     def draw(self):
@@ -357,7 +366,7 @@ class player(entity):
         self.h.draw()
 
     def endturn(self):
-        pass
+        self.b.endturn()
 
     def startturn(self):
         if not self.dead:
@@ -643,6 +652,8 @@ class game():
                 if e.acting:
                     found = True
             if not found:
+                for e in self.enemies:
+                    e.b.endturn()
                 self.playerTurn = True
                 for p in self.players:
                     p.startturn()

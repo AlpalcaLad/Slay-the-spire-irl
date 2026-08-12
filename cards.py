@@ -159,35 +159,49 @@ class card():
         for t in range(times):
             c.target.damage(dmg)
     
-    def protect(self):
+    def protect(self,target=c.source):
         blk = self.block
 
-        frail = c.source.b.frail
+        frail = target.b.frail
         if frail > 0:
             blk = blk // 2
-            c.source.b.frail -= 1
+            target.b.frail -= 1
 
-        c.source.block += blk
+        target.block += blk
     
-    def sip(self):
+    def sip(self,target=c.source):
         if self.sips > 0:
-            c.source.b.drinkSafe -= self.sips
-            if c.source.b.drinkSafe < 0:
-                c.source.b.drinkSafe = 0
+            target.b.drinkSafe -= self.sips
+            if target.b.drinkSafe < 0:
+                target.b.drinkSafe = 0
                 iHandler.queue.append(instruction([
-                    "take "+str(self.sips)+" sips!"
-                ],60,c.source,False))
+                    "take "+str(self.sips)+f" sip{"s" if self.sips>1 else ""}!"
+                ],90,target,False))
 
     def exhaust(self):
         iHandler.queue.append(instruction([
             "Card exhausted!"
-        ],60,c.source,False))
+        ],90,c.source,False))
 
-    def tipsy(self,am):
-        c.target.b.tipsy += am
-        if c.target.b.tipsy >= 5:
-            c.target.b.tipsy.wasted += 1
-            c.target.b.tipsy -= 5
+    def tipsy(self,am,target=c.target):
+        target.b.tipsy += am
+        if target.b.tipsy >= 5:
+            target.b.tipsy.wasted += 1
+            target.b.tipsy -= 5
+
+    def draw(self,am,target=c.source):
+        iHandler.queue.append(instruction([
+            "Draw "+str(am)+f" card{"s" if self.am>1 else ""}"
+        ],120,target,False))
+
+    def heal(self,am,target=c.source):
+        target.hp = min(target.hp+am,target.hpMax)
+
+#region GENERIC
+
+
+
+
 
 #region strike
 
@@ -201,6 +215,8 @@ class strike(card):
     def play(self):
         self.damage()
 
+#region defend
+
 class defend(card):
     def __init__(self):
         super().__init__()
@@ -211,3 +227,131 @@ class defend(card):
 
     def play(self):
         self.protect()
+
+
+
+#region BEERMASTER
+
+class alcoholic_rage(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = True
+        self.selfTarget = False
+
+    def play(self):
+        c.target.b.vulnerable += 1
+        c.target.b.weak += 1
+
+class corona_and_lime(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.dmg=1
+        self.harmful = True
+        self.selfTarget = False
+
+    def play(self):
+        self.damage()
+        iHandler.queue.append(instruction([
+            "Draw a card",
+            "and take a sip"
+        ],180,c.source,False))
+
+class brewdog(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.dmg=1
+        self.sips = 1
+        self.harmful = True
+        self.selfTarget = False
+
+    def play(self):
+        c.target.b.vulnerable += 1
+        self.damage()
+
+class inchs(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.dmg=1
+        self.harmful = True
+        self.selfTarget = False
+
+    def play(self):
+        c.target.b.vulnerable += 1
+        self.damage()
+        self.sip()
+
+class peroni(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.block = 2
+        self.sips = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        for p in c.g.players:
+            self.protect(p)
+        self.sip()
+
+class relaxing_pint(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.sips = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        self.heal(2)
+        iHandler.queue.append(instruction([
+            "Take a sip",
+            "and exhaust this card"
+        ],180,c.source,False))
+
+class on_tap(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Draw 1 card, if named",
+            "after a drink, 2 more"
+        ],180,c.source,False))
+
+class catch_up(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.sips =1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        c.source.energy += 2
+        self.sip()
+
+class chug(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.dmg = 4
+        self.sips = 4
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        self.sip()
+
+#region COCKTAIL MIXER
+
+
+
+#region DESIGNATED DRIVER

@@ -37,6 +37,12 @@ def getenemy(enemyname):
             return slaverB
         case "slaverC":
             return slaverB
+        case "terroreel":
+            return terror_eel
+        case "thiefA" | "thiefB":
+            return thief
+        case "vineshamb":
+            return vine_shambler
         case _:
             return None
 #region intent
@@ -406,7 +412,7 @@ class lagavulin(enemy):
             ],False),
             intent(self,"attack",[3,1]),
             intent(self,"attack",[3,1]),
-            intent(self,"defend",[2 * len(self.g.players)]),
+            intent(self,"drink",[2]),
             intent(self,"debuff",["strength",1]),
         ]
         self.elite = True
