@@ -32,3 +32,8 @@ Stun enemy potion
 
 Permanent 1 card removal potion
 
+potential other rares=>
+	Gain 2 plating at the start of each combat
+	 Gain 1 ritual
+	 Heal to full potion
+	 Choose card from 5 to add to your deck (better card reward)

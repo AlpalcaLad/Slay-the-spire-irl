@@ -15,12 +15,14 @@ import requests
 
 #region Sprite
 class sprite():
-    def __init__(self,parent,game,asset,scale=100):
+    def __init__(self,parent,game,asset,scale=100,scaleBy=1):
         self.p = parent
         self.g = game
         self.img = pygame.image.load(asset).convert_alpha()
         if scale != 100:
             self.img = pygame.transform.scale(self.img,(scale,scale))
+        if scaleBy != 1:
+            self.img = pygame.transform.scale_by(self.img,scaleBy)
         self.x = 0
         self.y = 0
 
@@ -55,10 +57,13 @@ class assetHolder():
         self.mysteryAsset = self.load("./art/icons/mysteryIcon.png")
         self.stunAsset = self.load("./art/icons/stunnedIcon.png")
         self.attackDefendAsset = self.load("./art/icons/attackDefendIcon.png",35)
+        self.escapeAsset = self.load("./art/icons/escapeIcon.png",35)
 
         self.ritualAsset = self.load("./art/icons/ritualIcon.png")
         self.thornsAsset = self.load("./art/icons/thornsIcon.png")
         self.platingAsset = self.load("./art/icons/platingIcon.png",25)
+        self.shellAsset = self.load("./art/icons/hardenedShell.png",25)
+        self.shriekAsset = self.load("./art/icons/shriekAsset.png",25)
 
     def load(self,path,scale = 45):
         return pygame.transform.scale(pygame.image.load(path).convert_alpha(),(scale,scale))
@@ -91,6 +96,9 @@ class buffHandler():
 
         self.ritual = 0
         self.plating = 0
+        self.hardenedShell = 0
+        self.damageTaken = 0
+        self.shriek = 0
 
         self.freeCard = 0
 
@@ -128,6 +136,10 @@ class buffHandler():
             effects.append((str(self.ritual),assets.ritualAsset))
         if self.plating>0:
             effects.append((str(self.plating),assets.platingAsset))
+        if self.hardenedShell>0:
+            effects.append((str(self.hardenedShell-self.damageTaken),assets.shellAsset))
+        if self.shriek>0:
+            effects.append((str(self.shriek),assets.shriekAsset))
 
         return effects
 
@@ -257,6 +269,10 @@ class player(entity):
         self.energy = self.energyMax
         self.friendly = True
 
+        self.dead = False
+
+        self.shakeTime = 0
+
         self.awaitingCard = None
 
         match className: #setup player class
@@ -344,9 +360,24 @@ class player(entity):
         pass
 
     def startturn(self):
-        self.block = 0
+        if not self.dead:
+            self.block = 0
+            self.energy = self.energyMax
+            self.b.startturn()
+        else:
+            self.b.reset()
+
+    def reset(self):
+        self.hp = self.hpMax
+        self.b.reset()
         self.energy = self.energyMax
-        self.b.startturn()
+        self.block = 0
+
+    def combatEnd(self):
+        self.hp = max(1,self.hp)
+        self.b.reset()
+        self.energy = self.energyMax
+        self.block = 0
 
 colours = {
     "black": (0,0,0),
@@ -355,6 +386,7 @@ colours = {
 
 
 #region Game
+import pygame._sdl2 as sdl2
 class game():
     def __init__(self):
         #general setup
@@ -367,9 +399,18 @@ class game():
 
         #basic pygame setup
         pygame.init()
-        self.W, self.H = 1200, 900
+        self.W, self.H = 960, 540
         self.x,self.y = 0,0
-        self.screen = pygame.display.set_mode((self.W,self.H))#, pygame.FULLSCREEN)
+        flags = pygame.SCALED
+        flags |= pygame.RESIZABLE
+
+        self.screen = pygame.display.set_mode((self.W,self.H), flags | pygame.HIDDEN)
+        scale_fact = 2
+        window = sdl2.Window.from_display_module()
+        window.size = (self.W * scale_fact, self.H * scale_fact)
+        window.position = sdl2.WINDOWPOS_CENTERED
+        window.show()
+
         pygame.display.set_caption("Slay the Spire IRL")
         self.clock = pygame.time.Clock()
 
@@ -378,7 +419,7 @@ class game():
 
         #UI definition
         self.backdrops = [
-            sprite(self,self,"./art/protoBackdrop.png")
+            sprite(self,self,"./art/spireBackground.jpg",scaleBy=1.5)
             # sprite(self,self,"./art/backdropSky.png"),
             # sprite(self,self,"./art/backdropTree.png"),
             # sprite(self,self,"./art/backdropGrass.png")
@@ -396,6 +437,7 @@ class game():
         self.actionQueue = []
         self.playerTurn = True #whether players can play cards
         self.inCombat = False
+        self.eliteCombat = False
 
         self.startTime = time.time()
 
@@ -424,6 +466,8 @@ class game():
         self.playerTurn = False
 
         for e in self.enemies:
+            e.startturn()
+        for e in self.enemies:
             e.act()
 
     def mapToChar(self,string):
@@ -436,6 +480,7 @@ class game():
         else:
             return "driver"
 
+    #region Game - readCard
     def readCard(self,cardText: str):
         if cardText == "endturn":
             self.endturn()
@@ -462,7 +507,7 @@ class game():
                     else:
                         p.play(tempText)
         
-        elif getenemy(cardText) is not None or getenemy(cardText[:-1]) is not None:
+        elif getenemy(cardText) is not None:# or getenemy(cardText[:-1]) is not None:
             # for p in self.players: 
             #     p.energy = (p.energy + 1) * 2
             #     p.block = (p.block + 1) * 2
@@ -477,8 +522,8 @@ class game():
                 self.inCombat = True
 
             tempText = cardText
-            if tempText[-1].isupper():
-                tempText=tempText[:-1]
+            # if tempText[-1].isupper():
+            #     tempText=tempText[:-1]
 
             found = False
             for e in self.enemies:
@@ -492,9 +537,9 @@ class game():
                 en.enName = tempText
                 self.enemies.append(en)
                 #reposition all enemies
-                incrX = self.H/(len(self.enemies)+1)
+                incrX = self.W/(len(self.enemies)+1)
                 for i in range(len(self.enemies)):
-                    self.enemies[i].x = incrX * (i+1)
+                    self.enemies[i].x = incrX * (i+1) - 75
                     self.enemies[i].h.x = self.enemies[i].x #update healthbar positions
         
         elif cardText.startswith("event"):
@@ -522,13 +567,13 @@ class game():
             rewards = [
                 instruction(
                     ["Incorrect! The answer was "+quizQ["correct_answer"],"You move on a failiure..."],
-                    240,None,True
+                    360,None,True
                 )for i in range(4)
             ]
 
             rewards[correctAns]=instruction(
                 ["Correct! You recieve 3 gold as a reward."],
-                200, None, True
+                300, None, True
             )
             iHandler.queue.append(instruction(
                 quizT,-1,None,True,rewards
@@ -542,7 +587,7 @@ class game():
             if len(iHandler.active)>0 and len(iHandler.active[0].options)>=int(cardText[1]):
                 #answer question
                 #print(cardText[1],iHandler.active[0].options[int(cardText[1])].text)
-                iHandler.queue.append(iHandler.active[0].options[int(cardText[1])])
+                iHandler.queue.append(iHandler.active[0].options[int(cardText[1])-1])
                 iHandler.active[0].duration=0
 
         print("Read card ",cardText)
@@ -553,6 +598,7 @@ class game():
         self.cardsToBePlayed = sharedArray
         return sharedArray
 
+    #region Game - mainloop
     def mainloop(self):
         if keyboard.is_pressed("q"):
             exit()
@@ -603,10 +649,27 @@ class game():
 
         #check if all enemies dead and in combat
         if len(self.enemies)==0 and self.inCombat:
-            pass
+            self.playerTurn = False
+            for p in self.players:
+                p.combatEnd()
+
+            #reward instructions
+            if self.eliteCombat:
+                self.eliteCombat = False
+                iHandler.queue.append(instruction(
+                    ["Everyone gets 1 rare potion","Everyone gets 1 card reward","2 gold"],
+                    300,blocking=True
+                ))
+            else:
+                iHandler.queue.append(instruction(
+                    ["Everyone gets 1 simple potion","Everyone gets 1 card reward","1 gold"],
+                    300,blocking=True
+                ))
         
         #render enemies
         for e in self.enemies:
+            if self.inCombat and e.elite:
+                self.eliteCombat = True
             e.draw()
 
         #render misc ui

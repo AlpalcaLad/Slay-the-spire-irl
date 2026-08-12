@@ -167,7 +167,7 @@ class card():
             blk = blk // 2
             c.source.b.frail -= 1
 
-        c.target.block += blk
+        c.source.block += blk
     
     def sip(self):
         if self.sips > 0:
