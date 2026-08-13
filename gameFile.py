@@ -86,7 +86,7 @@ class buffHandler():
         self.permaStrength = 0
 
         #special
-        self.store = [] #stored effects
+        self.store: list[tuple] = [] #stored effects
         self.drinkSafe = 0
 
         #powers
@@ -95,6 +95,7 @@ class buffHandler():
         self.herbAroma = 0
         self.minAroma = 0
         self.sommelier = 0
+        self.alchemist = 0
 
         self.ritual = 0
         self.plating = 0

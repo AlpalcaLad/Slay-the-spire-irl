@@ -25,7 +25,7 @@ wasted: take double damage this turn
 [[Drunken Wallop]] (Deal damage equal to enemies tipsy, 2 cost ATTACK)
 [[Spin the bottle]] (Draw 4 cards and discard 4 cards, 1 cost SKILL)
 [[Roulette]] (50% gain 2 block, 50% gain 2 tipsy, 0 cost, SKILL) 
-[[Ride the bus]] (Apply 1 tipsy, 2 more for already tipsy targets. Costs 1, SKILL)
+[[Ride the bus]] (Apply 1 tipsy, 3 for already tipsy targets. Costs 1, SKILL)
 [[Taste test]] (Gain 2 energy, take a sip, costs 0, SKILL)
 [[Key ingredients]] (Choose any two cards from your draw pile and add them to your hand, 1 cost, SKILL, RARE)
 [[Seal of approval]] (Another player tries your drink, both draw 3 cards, exhaust, 1 cost SKILL)

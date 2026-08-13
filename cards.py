@@ -665,6 +665,36 @@ class seal_of_approval(card):
             "both draw 3"
         ],150,c.source,False))
 
+class keep_it_flowing(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.block = 1
+        self.harmful = True
+        self.selfTarget = False
+
+    def play(self):
+        self.tipsy(1)
+        self.protect()
+        iHandler.queue.append(instruction([
+            "draw 1 card",
+        ],150,c.source,False))
+
+class get_it_started(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.block = 1
+        self.harmful = True
+        self.selfTarget = False
+
+    def play(self):
+        self.tipsy(1)
+        self.protect()
+        iHandler.queue.append(instruction([
+            "draw 1 card",
+        ],150,c.source,False))
+
 class down_the_hatch(card):
     def __init__(self):
         super().__init__()
