@@ -689,11 +689,23 @@ class get_it_started(card):
         self.selfTarget = False
 
     def play(self):
-        self.tipsy(1)
-        self.protect()
-        iHandler.queue.append(instruction([
-            "draw 1 card",
-        ],150,c.source,False))
+        if c.target.b.tipsy == 0:
+            self.tipsy(4)
+        else:
+            iHandler.queue.append(instruction([
+                "target had no tipsy!",
+            ],150,c.source,False))
+
+class alchemist(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.block = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        c.source.b.alchemist += 1
 
 class down_the_hatch(card):
     def __init__(self):
@@ -751,5 +763,6 @@ class down_the_hatch(card):
 
 
 #region WINE CONNOISEUR   
+
 
 #region DESIGNATED DRIVER
