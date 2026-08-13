@@ -24,3 +24,5 @@ Findable cards
 [[Believe in you]] (Another player gains 2 energy, 0 cost SKILL, COMMON)
 [[Freshen up]] (Exhaust any number of cards in your hand, 1 cost SKILL)
 
+POSSIBLE CARDS
+[[Sealant]] (All players heal to full, exhaust, 3 cost SKILL)

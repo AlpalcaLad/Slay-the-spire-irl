@@ -135,16 +135,16 @@ class card():
     def play(self):
         pass
 
-    def damage(self, times=1):
+    def damage(self, times=1,target = c.target):
         #must have attacker and target
-        if c.source is None or c.target is None:
+        if c.source is None or target is None:
             return
         dmg = self.dmg
 
         strength = c.source.b.strength
         weak = c.source.b.weak
-        vulnerable = c.target.b.vulnerable
-        wasted = c.target.b.wasted
+        vulnerable = target.b.vulnerable
+        wasted = target.b.wasted
         
         dmg += strength
         if vulnerable > 0:
@@ -157,7 +157,7 @@ class card():
             dmg*=2
 
         for t in range(times):
-            c.target.damage(dmg)
+            target.damage(dmg)
     
     def protect(self,target=c.source):
         blk = self.block
@@ -350,8 +350,258 @@ class chug(card):
     def play(self):
         self.sip()
 
+class snakebite(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 3
+        self.dmg = 5
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        self.damage()
+
+class wingman(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = True
+        self.selfTarget = False
+
+    def play(self):
+        c.target.b.vulnerable += 3
+
+class beer_jacket(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.block = 2
+        self.sips = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        self.protect()
+        self.sip()
+
+class ring_of_fire(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.sips = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        for p in c.g.players:
+            p.energy += 1
+            self.sip(p)
+
+class split_the_g(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        for p in c.g.players:
+            p.energy += 1
+            self.sip(p)
+
+class hellsraiser(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        c.source.b.freeCardNames = [
+            "corona",
+            "brewdog",
+            "inchs",
+            "peroni",
+            "snakebite",
+        ]
+
+class tacky_chunder(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.block = 2
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Exhaust a card",
+            "in your hand"
+        ],150,c.source,False))
+        self.protect()
+
+class finisher(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.dmg = 1
+        self.harmful = True
+        self.selfTarget = False
+
+    def play(self):
+        self.dmg = c.target.b.vulnerable
+        self.damage()
+
+class break_the_seal(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Draw until 10",
+            "in your hand"
+        ],150,c.source,False))
+        self.protect()
+
+
 #region COCKTAIL MIXER
 
+class lemon_up(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+        self.harmful = False
+        self.selfTarget = True
 
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Added lemonade!"
+        ],90,c.source,False))
+        c.source.b.store.append("lemonade")
+
+class clearly_strong(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Added vodka!"
+        ],90,c.source,False))
+        c.source.b.store.append("vodka")
+
+class bump_the_flavour(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Added squash!"
+        ],90,c.source,False))
+        c.source.b.store.append("squash")
+
+class see_sunrise(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Added orange juice!"
+        ],90,c.source,False))
+        c.source.b.store.append("orange")
+
+class red_moon(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Added cranberry juice!"
+        ],90,c.source,False))
+        c.source.b.store.append("cranberry")
+
+class schnapp_to_it(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Added peach schnapps!"
+        ],90,c.source,False))
+        c.source.b.store.append("peach")
+
+class down_the_hatch(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.dmg = 1
+        self.harmful = True
+        self.selfTarget = False
+        self.printEffects = []
+
+    def printAppend(self,text1,val,text2):
+        for i in range(len(self.printEffects)):
+            if text1 in self.printEffects[i]:
+                newVal = int(self.printEffects[i].replace(text1,"").replace(text2,""))+val
+                self.printEffects[i]=text1+str(newVal)+text2
+                return
+        self.printEffects.append(text1+str(val)+text2)
+                
+
+    def play(self):
+        for effect in c.source.b.store:
+            match effect:
+                case "vodka":
+                    e = random.choice(c.g.enemies)
+                    self.dmg = 2
+                    self.damage(1,e)
+                case "lemonade":
+                    self.block = 2
+                    self.protect()
+                case "squash":
+                    c.source.energy += 2
+                case "orange":
+                    self.heal(1)
+                case "cranberry":
+                    self.printAppend("Exhaust up to ",2," cards")
+                case "peach":
+                    self.tipsy(4)
+                case "blue":
+                    self.tipsy(4,c.source)
+                    c.source.b.strength += 1
+                case "gin":
+                    c.source.b.gin += 1
+                case "rum":
+                    c.dmg = 2
+                    self.damage(1)
+                    self.printAppend("Brew ",2," rum")
+                    c.source.b.store.append("rum")
+                    c.source.b.store.append("rum")
+                case _:
+                    return
+        if len(self.printEffects)>0:
+            iHandler.queue.append(instruction(
+                self.printEffects
+            ,180 * len(self.printEffects) ,c.source,False))
+
+
+                    
 
 #region DESIGNATED DRIVER

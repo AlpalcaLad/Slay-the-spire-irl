@@ -24,8 +24,8 @@ Findable cards
 [[Hellsraiser]] (All cards named after a drink are free to play, exhaust, 2 cost POWER)
 [[Tacky chunder]] (Exhaust a card in your hand, gain 2 block, 1 cost, SKILL)
 [[Finisher]] (Deal damage equal to enemies vulnerable, 2 cost, ATTACK)
+[[Break the seal]] (Draw until you have 10 cards, exhaust, 1 cost, SKILL)
 
 POSSIBLE
 [[Slurred words]] (Deal 1 damage, if you've drank this turn attacks again, 1 cost ATTACK)
-[[Break the seal]] (Draw until you have 10 cards, exhaust, 1 cost, SKILL)
 [[Beer belly]] (If you've drank this turn, gain 3 block, 2 cost, SKILL)

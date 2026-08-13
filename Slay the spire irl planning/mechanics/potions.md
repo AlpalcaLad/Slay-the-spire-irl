@@ -11,7 +11,7 @@ draw 2 potion
 
 3 tipsy potion
 
-+1 drink safety
+	+1 drink safety  REMOVED
 
 +2 energy potion
 

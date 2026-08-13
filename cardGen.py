@@ -3,16 +3,82 @@ import numpy as np
 
 cards = [ # art, name, type, energy, description
     #("./cards/",1,"",[""]),
-    # Wine connoisseur
-    ("./art/cards/strike_wine.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
-    ("./art/cards/defend_wine.png","Defend", "skill", 1,["Gain 1 $Block$"]),
-    ("./art/cards/grape_time.png","Grape Time", "skill", 0,["Add 1 $Grape$"]),
-    ("./art/cards/fruity_aroma.png","Fruity Aroma", "skill", 1,["$Draw$3 cards", "$Discard$1 card"]),
-    ("./art/cards/royal_gamble.png","Royal Gamble", "skill", 0,["Shuffle 2 $Dazed$","into draw pile", "gain 2 $energy$"]),
-    ("./art/cards/snobbery.png","Snobbery", "skill", 2,["Gain 2 $block$","apply 1 $weak$", "Add 2 snobbish"]),
-    ("./art/cards/grape_dance.png","Grape Dance", "skill", 1,["Add 3 $Grapes$","$Exhaust$"]),
-    ("./art/cards/bottle_smack.png","Bottle Smack", "attack", 1,["Deal 3 $Damage$","$Exhaust$"]),
-    ("./art/cards/grape_shot.png","Grape Shot", "power", 1,["$Grapes$hit all enemies","Add 3 $Grapes$"]),
+    #region Wine connoisseur
+
+    # ("./art/cards/winecon/strike_wine.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
+    # ("./art/cards/winecon/defend_wine.png","Defend", "skill", 1,["Gain 1 $Block$"]),
+    # ("./art/cards/winecon/grape_time.png","Grape Time", "skill", 0,["Add 1 $Grape$"]),
+    # ("./art/cards/winecon/fruity_aroma.png","Fruity Aroma", "skill", 1,["$Draw$3 cards", "$Discard$1 card"]),
+    # ("./art/cards/winecon/grape.png","Grape", "attack", 0,["Deal 1 $Damage$","take 1 $sip$"]),
+    # ("./art/cards/winecon/royal_gamble.png","Royal Gamble", "skill", 0,["Shuffle 2 $Dazed$","into draw pile", "gain 2 $energy$"]),
+    # ("./art/cards/winecon/snobbery.png","Snobbery", "skill", 2,["Gain 2 $block$","apply 1 $weak$", "Add 2 $snobbish$"]),
+    # ("./art/cards/winecon/vinyard.png","Vinyard", "skill", 1,["Add 2 $Grapes$"]),
+    # ("./art/cards/winecon/grape_vine.png","Grape Vine", "power", 1,["At start of turn","Add 1 $Grape$"]),
+    # ("./art/cards/winecon/bottle_up.png","Bottle It Up", "skill", 2,["Gain 3 $Block$"]),
+    # ("./art/cards/winecon/grape_dance.png","Grape Dance", "skill", 1,["Add 3 $Grapes$","$Exhaust$"]),
+    # ("./art/cards/winecon/cheese_board.png","Cheese Board", "skill", 2,["All players $Draw$ 1","and Gain 1 $Block$"]),
+    # ("./art/cards/winecon/floral_aroma.png","Floral Aroma", "skill", 1,["$Retain$","$Exhaust$ all $statuses$","in your hand"]),
+    # ("./art/cards/winecon/herbal_aroma.png","Herbal Aroma", "power", 1,["When you $Draw$","a $Status$","$Draw$ 1"]),
+    # ("./art/cards/winecon/mineral_aroma.png","Mineral Aroma", "power", 1,["On $Status$ creation","Deal 1 $Damage$", "to random enemy"]),
+    # ("./art/cards/winecon/pour_heart.png","Pour Out Heart", "skill", 1,["Add $emotional$", "to discard pile","Gain 2 $energy$"]),
+    # ("./art/cards/winecon/one_more_glass.png","One More Glass", "skill", 1,["Add $Dazed$to draw pile","Add 3 $Grapes$"]),
+    # ("./art/cards/winecon/sommelier.png","Sommelier", "power", 1,["$Grapes$ deal 1","extra $Damage$"]),
+    # ("./art/cards/winecon/sommelier.png","Sommelier", "power", 1,["$Grapes$ deal 1","extra $Damage$"]),
+    # ("./art/cards/winecon/grape_trap.png","Grape Trap", "skill", 2,["Plays all $Grapes$","$exhausted$ in","this combat"]),
+    # ("./art/cards/winecon/grape_shot.png","Grape Shot", "power", 2,["$Grapes$hit all enemies","Add 3 $Grapes$"]),
+    # ("./art/cards/winecon/bottle_smack.png","Bottle Smack", "attack", 1,["Deal 3 $Damage$","$Exhaust$"]),
+    # ("./art/cards/winecon/sommelier.png","Sommelier", "power", 1,["$Grapes$ deal 1","extra $Damage$"]),
+    # #region status
+    # ("./art/cards/general/dazed.png","Dazed", "status", -1,["$Unplayable$","$ethereal$"]),
+    # ("./art/cards/general/dazed.png","Dazed", "status", -1,["$Unplayable$","$ethereal$"]),
+    # ("./art/cards/general/dazed.png","Dazed", "status", -1,["$Unplayable$","$ethereal$"]),
+    # ("./art/cards/general/dazed.png","Dazed", "status", -1,["$Unplayable$","$ethereal$"]),
+    # ("./art/cards/general/dazed.png","Dazed", "status", -1,["$Unplayable$","$ethereal$"]),
+    # ("./art/cards/general/dazed.png","Dazed", "status", -1,["$Unplayable$","$ethereal$"]),
+
+    # ("./art/cards/general/emotional.png","Emotional", "status", -1,["$Unplayable$","take 1 $sip$","when $drawn$"]),
+    # ("./art/cards/general/emotional.png","Emotional", "status", -1,["$Unplayable$","take 1 $sip$","when $drawn$"]),
+    # ("./art/cards/general/emotional.png","Emotional", "status", -1,["$Unplayable$","take 1 $sip$","when $drawn$"]),
+    # ("./art/cards/general/emotional.png","Emotional", "status", -1,["$Unplayable$","take 1 $sip$","when $drawn$"]),
+    # ("./art/cards/general/snobbish.png","Snobbish", "status", -1,["$Unplayable$","$retain$"]),
+    # ("./art/cards/general/snobbish.png","Snobbish", "status", -1,["$Unplayable$","$retain$"]),
+    # ("./art/cards/general/snobbish.png","Snobbish", "status", -1,["$Unplayable$","$retain$"]),
+    # ("./art/cards/general/snobbish.png","Snobbish", "status", -1,["$Unplayable$","$retain$"]),
+    # ("./art/cards/general/snobbish.png","Snobbish", "status", -1,["$Unplayable$","$retain$"]),
+    # ("./art/cards/general/snobbish.png","Snobbish", "status", -1,["$Unplayable$","$retain$"]),
+    # ("./art/cards/general/snobbish.png","Snobbish", "status", -1,["$Unplayable$","$retain$"]),
+    # ("./art/cards/winecon/strike_wine.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
+    # ("./art/cards/winecon/defend_wine.png","Defend", "skill", 1,["Gain 1 $Block$"]),
+    # ("./art/cards/winecon/strike_wine.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
+    # ("./art/cards/winecon/defend_wine.png","Defend", "skill", 1,["Gain 1 $Block$"]),
+
+    #region #Beer master
+    # ("./art/cards/beer/strike.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
+    # ("./art/cards/beer/defend.png","Defend", "skill", 1,["Gain 1 $Block$"]),
+    # ("./art/cards/beer/strike.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
+    # ("./art/cards/beer/defend.png","Defend", "skill", 1,["Gain 1 $Block$"]),
+    # ("./art/cards/beer/strike.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
+    # ("./art/cards/beer/defend.png","Defend", "skill", 1,["Gain 1 $Block$"]),
+    ("./art/cards/beer/alcoholic_rage.png","Alcoholic Rage", "skill", 1,["Apply 1 $Weak$", "and 1 $Vulnerable", "take a $sip$"]),
+    ("./art/cards/beer/corona.png","Corona", "attack", 1,["$Draw$ 1 card","Deal 1 $Damage$","take 1 $sip$"]),
+    ("./art/cards/beer/brewdog.png","Brewdog", "attack", 1,["Apply 1 $Vulnerable$","Deal 1 $Damage$"]),
+    ("./art/cards/beer/inchs.png","Inchs", "attack", 1,["Deal 1 $Damage$","to ALL enemies","take 1 $sip$"]),
+    ("./art/cards/beer/peroni.png","Peroni", "skill", 1,["All players gain","2 $Block$","take a $sip$"]),
+    ("./art/cards/beer/relaxing_pint.png","Relaxing Pint", "skill", 1,["$Heal$ 2","take a $sip$","$exhaust$"]),
+    ("./art/cards/beer/on_tap.png","On Tap", "skill", 1,["$Draw$ 1 card","2 more if its named","after a drink"]),
+    ("./art/cards/beer/catch_up.png","Catch Up", "skill", 1,["Gain 2 $energy$","take a $sip$"]),
+    ("./art/cards/beer/chug.png","Chug", "attack", 1,["Deal 4 $Damage$","take 4 $sips$","$exhaust$"]),
+    ("./art/cards/beer/snakebite.png","Snakebite", "attack", 3,["$retain$","Deal 5 $Damage$"]),
+    ("./art/cards/beer/wingman.png","Wingman", "skill", 1,["Apply 3 $Vulnerable$"]),
+    ("./art/cards/beer/beer_coat.png","Beer Jacket", "skill", 1,["Gain 2 $block$", "take a $sip$"]),
+    ("./art/cards/beer/ring_of_fire.png","Ring Of Fire", "skill", 0,["All players gain","1 $energy$ and", "take a $sip$"]),
+    ("./art/cards/beer/split_the_g.png","Split The G", "skill", 2,["Triple $Vulnerable$","$halve$ your drink"]),
+    ("./art/cards/beer/hellsraiser.png","Hellsraiser", "power", 2,["All cards named after","a drink are $free$","$to play$"]),
+    ("./art/cards/beer/tacky_chunder.png","Tacky Chunder", "skill", 1,["$Exhaust$ 1 card","in your hand","Gain 2 $Block$"]),
+    ("./art/cards/beer/finisher.png","Finisher", "attack", 2,["Deal $Damage$ equal","to vulnerable","on target"]),
+    ("./art/cards/beer/break_the_seal.png","Break the seal", "attack", 1,["$Draw$ until you","have 10 cards","$exhaust$"]),
+
+    #region cocktail mixer
 ]
 
 from PIL import Image, ImageDraw, ImageFont
@@ -70,8 +136,9 @@ def placeCard(img:cv2.typing.MatLike, card: cv2.typing.MatLike,x:int,y:int,name:
     overlay(img,card,x,y)
 
     #energy
-    font = ImageFont.truetype("./misc/kreon.ttf",80)
-    img = putTextPIL(img,str(energy),(x+70-font.getmask(str(energy)).getbbox()[2]//2,y+30),80,(255,255,255),True,(0,0,0))
+    if energy != -1:
+        font = ImageFont.truetype("./misc/kreon.ttf",80)
+        img = putTextPIL(img,str(energy),(x+70-font.getmask(str(energy)).getbbox()[2]//2,y+30),80,(255,255,255),True,(0,0,0))
 
     #name
     font = ImageFont.truetype("./misc/kreon.ttf",60)
@@ -104,16 +171,16 @@ def placeCard(img:cv2.typing.MatLike, card: cv2.typing.MatLike,x:int,y:int,name:
             (x+345-bbox[2]//2, y + 560),
             55
         )
-        y += bbox[3]+16
+        y += 70#bbox[3]+16
 
     return img
 
 border = 60
-negBorderX = 80
+negBorderX = 75
 negBorderY = 140
 x = border
 y = border
-offset = 0
+offset = 2
 blankPage = True
 for c in cards:
     card=cv2.imread(c[0])

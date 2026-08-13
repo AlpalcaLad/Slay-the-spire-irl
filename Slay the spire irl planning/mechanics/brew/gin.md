@@ -1,1 +1,1 @@
-Deal 1 damage at the start of your turn
+Deal 1 damage to random at the start of your turn

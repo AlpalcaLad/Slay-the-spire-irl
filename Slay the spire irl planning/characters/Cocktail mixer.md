@@ -6,8 +6,8 @@ Starting card makes you drink what you’ve brewed, which has an effect based on
 **starting cards**
 3x [[strike]]
 3x [[defend]]
-1x [[Clear(ly) strong]] (brews splash of vodka, 0 cost SKILL)
-1x [[lemon up]] (brews shot of lemonade, 0 cost SKILL)
+1x [[Clear(ly) strong]] (brews splash of [[vodka]], 0 cost SKILL)
+1x [[lemon up]] (brews shot of [[lemonade]], 0 cost SKILL)
 1x [[Down the hatch]] (drink everything brewed, 2 cost SKILL)
 
 **effects**

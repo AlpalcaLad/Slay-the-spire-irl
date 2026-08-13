@@ -81,6 +81,8 @@ class buffHandler():
         self.tipsy = 0
         self.wasted = 0
 
+        self.gin = 0
+
         self.permaStrength = 0
 
         #special
