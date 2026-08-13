@@ -197,6 +197,15 @@ class card():
     def heal(self,am,target=c.source):
         target.hp = min(target.hp+am,target.hpMax)
 
+    def brew(self,message,addition):
+        if c.source.b.alchemist>0:
+            self.block = c.source.b.alchemist
+            self.protect()
+        iHandler.queue.append(instruction(
+            message
+        ,90,c.source,False))
+        c.source.b.store.append(addition)
+
 #region GENERIC
 
 
@@ -477,10 +486,7 @@ class lemon_up(card):
         self.selfTarget = True
 
     def play(self):
-        iHandler.queue.append(instruction([
-            "Added lemonade!"
-        ],90,c.source,False))
-        c.source.b.store.append("lemonade")
+        self.brew(["Added lemonade!"], "lemonade")
 
 class clearly_strong(card):
     def __init__(self):
@@ -490,10 +496,7 @@ class clearly_strong(card):
         self.selfTarget = True
 
     def play(self):
-        iHandler.queue.append(instruction([
-            "Added vodka!"
-        ],90,c.source,False))
-        c.source.b.store.append("vodka")
+        self.brew(["Added vodka!"], "vodka")
 
 class bump_the_flavour(card):
     def __init__(self):
@@ -503,10 +506,7 @@ class bump_the_flavour(card):
         self.selfTarget = True
 
     def play(self):
-        iHandler.queue.append(instruction([
-            "Added squash!"
-        ],90,c.source,False))
-        c.source.b.store.append("squash")
+        self.brew(["Added squash!"], "squash")
 
 class see_sunrise(card):
     def __init__(self):
@@ -516,10 +516,7 @@ class see_sunrise(card):
         self.selfTarget = True
 
     def play(self):
-        iHandler.queue.append(instruction([
-            "Added orange juice!"
-        ],90,c.source,False))
-        c.source.b.store.append("orange")
+        self.brew(["Added orange juice!"], "orange")
 
 class red_moon(card):
     def __init__(self):
@@ -529,12 +526,62 @@ class red_moon(card):
         self.selfTarget = True
 
     def play(self):
-        iHandler.queue.append(instruction([
-            "Added cranberry juice!"
-        ],90,c.source,False))
-        c.source.b.store.append("cranberry")
+        self.brew(["Added cranberry juice!"], "cranberry")
 
 class schnapp_to_it(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        self.brew(["Added peach schnapps!"], "peach")
+
+class blue_moon(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        self.brew(["Added blue curacao!","Exhausted"], "blue")
+
+class gin_to_win(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        self.brew(["Added gin!"], "gin")
+
+class rumaway(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        self.brew(["Added rum!", "Exhausted"], "rum")
+
+class drunken_wallop(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.harmful = True
+        self.selfTarget = False
+        self.dmg = 1
+
+    def play(self):
+        self.dmg = c.target.b.tipsy
+        self.damage()
+        self.dmg = 1
+
+class spin_the_bottle(card):
     def __init__(self):
         super().__init__()
         self.cost = 1
@@ -543,9 +590,80 @@ class schnapp_to_it(card):
 
     def play(self):
         iHandler.queue.append(instruction([
-            "Added peach schnapps!"
-        ],90,c.source,False))
-        c.source.b.store.append("peach")
+            "Draw 4 cards",
+            "Discard 4 cards"
+        ],150,c.source,False))
+
+class roulette(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        if random.randint(0,1)==0:
+            iHandler.queue.append(instruction([
+                "Gained block!"
+            ],150,c.source,False))
+            self.block = 2
+            self.protect()
+        else:
+            iHandler.queue.append(instruction([
+                "Gained tipsy!"
+            ],150,c.source,False))
+            self.tipsy(2,c.source)
+
+class ride_the_bus(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = True
+        self.selfTarget = False
+
+    def play(self):
+        if c.target.b.tipsy > 0:
+            self.tipsy(3)
+        else:
+            self.tipsy(1)
+
+class taste_test(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+        self.sips = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        self.sip()
+        c.source.energy += 2
+
+class key_ingredients(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Take 2 cards",
+            "from draw pile"
+        ],150,c.source,False))
+
+class seal_of_approval(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Share drink",
+            "both draw 3"
+        ],150,c.source,False))
 
 class down_the_hatch(card):
     def __init__(self):
@@ -602,6 +720,6 @@ class down_the_hatch(card):
             ,180 * len(self.printEffects) ,c.source,False))
 
 
-                    
+#region WINE CONNOISEUR   
 
 #region DESIGNATED DRIVER
