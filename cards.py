@@ -358,6 +358,7 @@ class chug(card):
 
     def play(self):
         self.sip()
+        self.damage()
 
 class snakebite(card):
     def __init__(self):

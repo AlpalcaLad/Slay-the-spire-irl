@@ -37,3 +37,4 @@ potential other rares=>
 	 Gain 1 ritual
 	 Heal to full potion
 	 Choose card from 5 to add to your deck (better card reward)
+	 1 extra energy each turn

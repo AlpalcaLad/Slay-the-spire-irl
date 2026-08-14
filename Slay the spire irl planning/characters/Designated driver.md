@@ -10,7 +10,7 @@ Lots of buffs and multiplayer cards and ability to make potions
 Findable cards
 [[Carry]] (Give another player 2 block, 1 cost SKILL)
 [[Hit and run]] (Deal 2 damage, gain 2 block, 2 cost ATTACK)
-[[The good stuff]] (Give all other players with space a random rare potion, exhaust, 2 cost SKILL, RARE)
+[[The good stuff]] (Give a player with space a random rare potion, exhaust, 2 cost SKILL, RARE)
 [[Raid trunk]] (Draw 3 cards, exhaust, 1 cost SKILL)
 [[Be responsible]] (Exhaust a card in another players hand, 1 cost SKILL)
 [[Offer lift]] (Another player can draw a card of their choice, 1 cost SKILL)
