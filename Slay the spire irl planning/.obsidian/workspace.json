@@ -162,7 +162,7 @@
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 8
       }
     ],
     "direction": "vertical"
@@ -326,16 +326,16 @@
       "bases:Create new base": false
     }
   },
-  "active": "28df5be538cf0e0b",
+  "active": "66c9925f363bb623",
   "lastOpenFiles": [
-    "characters/Designated driver.md",
-    "characters/Wine connoisseur.md",
     "characters/Cocktail mixer.md",
+    "characters/Beer master.md",
+    "characters/Wine connoisseur.md",
+    "characters/Designated driver.md",
     "mechanics/brew/blue curacao.md",
     "mechanics/brew/peach schnapps.md",
     "mechanics/brew/gin.md",
     "mechanics/potions.md",
-    "characters/Beer master.md",
     "mechanics/buffs and debuffs.md",
     "core/Main concept.md",
     "core/Gameplay loop.md",
