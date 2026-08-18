@@ -88,6 +88,7 @@ class buffHandler():
         #special
         self.store: list[tuple] = [] #stored effects
         self.drinkSafe = 0
+        self.drinksThisCombat = 0
 
         #powers
         self.hellsraiser = 0
@@ -96,12 +97,16 @@ class buffHandler():
         self.minAroma = 0
         self.sommelier = 0
         self.alchemist = 0
+        self.grapeshot = 0
+        self.buffer = 0
 
         self.ritual = 0
         self.plating = 0
         self.hardenedShell = 0
         self.damageTaken = 0
         self.shriek = 0
+
+        self.grapesPlayed = 0
 
         self.freeCard = 0
 
@@ -112,6 +117,28 @@ class buffHandler():
         self.weak = 0
         self.tipsy = 0
         self.vulnerable = 0
+
+        self.store: list[tuple] = [] #stored effects
+        self.drinkSafe = 0
+        self.drinksThisCombat = 0
+
+        self.hellsraiser = 0
+        self.grapeVine = 0
+        self.herbAroma = 0
+        self.minAroma = 0
+        self.sommelier = 0
+        self.alchemist = 0
+        self.grapeShot = 0
+        self.buffer = 0
+    
+        self.ritual = 0
+        self.plating = 0
+        self.hardenedShell = 0
+        self.damageTaken = 0
+        self.shriek = 0
+
+        self.grapesPlayed = 0
+
         self.freeCardNames = []
     
     def startturn(self):
@@ -165,6 +192,7 @@ class entity():
         self.energy = -1
 
         self.acting = False
+        self.dead = False
 
         #buffs and debuffs
         self.b = buffHandler(self)
@@ -175,12 +203,16 @@ class entity():
 
         dmg -= blockAm
         if dmg > 0:
+            if self.b.buffer > 0:
+                self.b.buffer -= 1
+                return
             self.hp -= dmg
 
         if self.hp <= 0:
             self.die()
 
     def die(self):
+        self.dead = True
         self.hp = 0
         print(self.name + " died")
 
@@ -284,6 +316,10 @@ class player(entity):
 
         self.awaitingCard = None
 
+        self.startTurnText = [
+            "Draw 4 cards"
+        ]
+
         match className: #setup player class
             case "cocktail":
                 self.hp=10
@@ -323,13 +359,18 @@ class player(entity):
         if cardToPlay.harmful and c.target.friendly:
             iHandler.queue.append(instruction([
                 "Cannot harm another player!"
-            ],60,c.source,False))
+            ],120,c.source,False))
 
         #playing helping card targetted at enemy
         if not cardToPlay.harmful and not cardToPlay.selfTarget and not c.target.friendly:
             iHandler.queue.append(instruction([
                 "Cannot help an enemy!"
-            ],60,c.source,False))
+            ],120,c.source,False))
+
+        if not cardToPlay.harmful and cardToPlay.selfTarget and c.target==c.source:
+            iHandler.queue.append(instruction([
+                "Must target someone else",
+            ],120,c.source,False))
 
         cost = cardToPlay.cost
 
@@ -369,27 +410,41 @@ class player(entity):
         self.h.draw()
 
     def endturn(self):
-        self.b.endturn()
+        if not self.dead:
+            self.b.endturn()
 
     def startturn(self):
         if not self.dead:
             self.block = 0
             self.energy = self.energyMax
             self.b.startturn()
+            iHandler.queue.append(instruction(
+                self.startTurnText,
+                150,self,False
+            ))
         else:
-            self.b.reset()
+            pass
+            #self.b.reset()
 
     def reset(self):
+        self.dead = False
         self.hp = self.hpMax
         self.b.reset()
         self.energy = self.energyMax
         self.block = 0
+        self.startTurnText = [
+            "Draw 4 cards"
+        ]
 
     def combatEnd(self):
+        self.dead=False
         self.hp = max(1,self.hp)
         self.b.reset()
         self.energy = self.energyMax
         self.block = 0
+        self.startTurnText = [
+            "Draw 4 cards"
+        ]
 
 colours = {
     "black": (0,0,0),

@@ -120,6 +120,7 @@ class intent():
 
     def damage(self, am: int, times: int):
         for player in self.g.players:
+            if p.dead: continue
             dmg = am
 
             strength = self.p.b.strength
@@ -152,12 +153,14 @@ class intent():
     def sip(self, sips: int):
         if sips > 0:
             for p in self.g.players:
+                if p.dead: continue
                 p.b.drinkSafe -= self.sips
                 if p.b.drinkSafe < 0:
                     p.b.drinkSafe = 0
                     iHandler.queue.append(instruction([
                         "take "+str(sips)+" sips!"
                     ],90,c.source,False))
+                    p.b.drinksThisCombat += 1
 
     def act(self):
         match self.action:
@@ -253,6 +256,7 @@ class enemy(entity):
         self.block = 0
 
     def die(self):
+        self.dead = True
         if self in self.g.enemies:
             self.g.enemies.remove(self)
             #todo mini explosion animation

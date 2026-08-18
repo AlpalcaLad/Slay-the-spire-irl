@@ -22,7 +22,7 @@ Findable cards
 [[Maybe just one]] (Gain 2 energy, take a sip, 0 cost SKILL, COMMON)
 [[Rules broken]] (Draw 1 for each drink you've had this combat, 1 cost SKILL)
 [[Believe in you]] (Another player gains 2 energy, 0 cost SKILL, COMMON)
-[[Freshen up]] (Exhaust any number of cards in your hand, 1 cost SKILL)
+[[Freshen up]] (Exhaust any number of cards in your hand, exhaust, 1 cost SKILL)
 
 POSSIBLE CARDS
 [[Sealant]] (All players heal to full, exhaust, 3 cost SKILL)

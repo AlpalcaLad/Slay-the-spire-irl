@@ -5,6 +5,7 @@ import pygame
 import numpy as np
 from gameFile import entity
 from helperFuncs import *
+from enemies import enemy
 
 #region context
 class context():
@@ -16,6 +17,15 @@ class context():
         self.offset = 0
 
     def draw(self):
+        #check target is valid
+        if self.target.dead:
+            self.target = None
+            if isinstance(self.target,enemy):
+                for e in self.g.enemies:
+                    if not e.dead:
+                        self.target = e
+
+
         #draw the target marker
         if self.target is not None:
             self.offset = (self.offset+0.02)%(2*math.pi)
@@ -120,6 +130,152 @@ def getcard(cardName):
             return strike()
         case "defend":
             return defend()
+        #region cocktail mixer
+        case "clearstrng":
+            return clearly_strong()
+        case "lemonup":
+            return lemon_up()
+        case "downhat":
+            return down_the_hatch()
+        case "bumpflv":
+            return bump_the_flavour()
+        case "seesun":
+            return see_sunrise()
+        case "redmoon":
+            return red_moon()
+        case "schnapp":
+            return schnapp_to_it()
+        case "bluemoon":
+            return blue_moon()
+        case "rumaway":
+            return rumaway()
+        case "wallop":
+            return drunken_wallop()
+        case "spinbot":
+            return spin_the_bottle()
+        case "roulette":
+            return roulette()
+        case "ridebus":
+            return ride_the_bus()
+        case "tastetest":
+            return taste_test()
+        case "keyingred":
+            return key_ingredients()
+        case "sealappr":
+            return seal_of_approval()
+        case "keepitfl":
+            return keep_it_flowing()
+        case "getstart":
+            return get_it_started()
+        #region designated driver
+        case "supplybag":
+            return supply_bag()
+        case "notforme":
+            return not_for_me()
+        case "carry":
+            return carry()
+        case "hitnrun":
+            return hit_and_run()
+        case "goodstuff":
+            return the_good_stuff()
+        case "raidtrunk":
+            return raid_trunk()
+        case "responsible":
+            return be_responsible()
+        case "offerlift":
+            return offer_lift()
+        case "cherrypck":
+            return cherry_pick()
+        case "soberfoc":
+            return sober_focus()
+        case "wakeup":
+            return wake_up_call()
+        case "linestom":
+            return line_the_stomach()
+        case "checkin":
+            return check_in()
+        case "maybeone":
+            return maybe_just_one()
+        case "rulesbroke":
+            return rules_broken()
+        case "believe":
+            return believe_in_you()
+        case "freshenup":
+            return freshen_up()
+        #region beermaster
+        case "alcrage":
+            return alcoholic_rage()
+        case "corona":
+            return corona_and_lime()
+        case "brewdog":
+            return brewdog()
+        case "inchs":
+            return inchs()
+        case "peroni":
+            return peroni()
+        case "relaxing":
+            return relaxing_pint()
+        case "ontap":
+            return on_tap() 
+        case "catchup":
+            return catch_up()
+        case "chug":
+            return chug()
+        case "snakebite":
+            return snakebite()
+        case "wingman":
+            return wingman()
+        case "beerjack":
+            return beer_jacket()
+        case "ringfire":
+            return ring_of_fire()
+        case "splitg":
+            return split_the_g()
+        case "hellsraise":
+            return hellsraiser()
+        case "tackychun":
+            return tacky_chunder()
+        case "finisher":
+            return finisher()
+        #region wine connoiseur
+        case "grapetime":
+            return grape_time()
+        case "fruitarom":
+            return fruity_aroma()
+        case "grape":
+            return grape()
+        case "royalgam":
+            return royal_gamble()
+        case "snobbery":
+            return snobbery()
+        case "vinyard":
+            return vinyard()
+        case "grapevin":
+            return grape_vine()
+        case "bottleup":
+            return bottle_it_up()
+        case "grapedan":
+            return grape_dance()
+        case "cheesebrd":
+            return cheese_board()
+        case "floralarom":
+            return floral_aroma()
+        case "herbalarom":
+            return herbal_aroma()
+        case "minerarom":
+            return mineral_aroma()
+        case "pourheart":
+            return pour_out_heart()
+        case "onemoreg":
+            return one_more_glass()
+        case "sommelier":
+            return sommelier()
+        case "grapetrap":
+            return grape_trap()
+        case "grapeshot":
+            return grapeshot()
+        case "bottlesmk":
+            return bottle_smack()
         case _:
             return card()
 
@@ -205,6 +361,12 @@ class card():
             message
         ,90,c.source,False))
         c.source.b.store.append(addition)
+
+    def status(self):
+        if c.source.b.minAroma > 0:
+            e = random.choice(c.g.enemies)
+            self.dmg = 1
+            self.damage(1,e)
 
 #region GENERIC
 
@@ -765,5 +927,509 @@ class down_the_hatch(card):
 
 #region WINE CONNOISEUR   
 
+class grape(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+        self.dmg = 1
+        self.sips = 1
+        self.harmful = True
+        self.selfTarget = False
+
+    def play(self,target=c.target):
+        self.dmg = 1 + c.source.b.sommelier
+        if not c.source.b.grapeShot:
+            self.damage(1,target)
+        else:
+            for e in c.g.enemies:
+                self.damage(1,e)
+        self.sip()
+
+class grape_time(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Add a grape!"
+        ],90,c.source,False))
+
+class fruity_aroma(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Draw 3 cards",
+            "Discard 1 card"
+        ],120,c.source,False))
+
+class royal_gamble(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Shuffle 2 dazed",
+            "into draw pile"
+        ],120,c.source,False))
+        self.status()
+        c.source.energy += 2
+
+class snobbery(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.block = 2
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Add 2 snobbish",
+            "to your hand"
+        ],120,c.source,False))
+        self.status()
+        self.protect()
+        c.target.b.weak += 1
+
+class vinyard(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Add 2 grapes",
+            "to your hand"
+        ],120,c.source,False))
+
+class grape_vine(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Each turn add",
+            "a grape to hand"
+        ],120,c.source,False))
+        c.source.startTurnText.append("Add a grape")
+
+class bottle_it_up(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.block = 3
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        self.protect()
+
+class grape_dance(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Add 3 grapes",
+            "exhaust"
+        ],120,c.source,False))
+
+class cheese_board(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.block = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "All players draw 1"
+        ],120,None,False))
+        for p in c.g.players:
+            self.protect(p)
+
+class floral_aroma(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Exhaust all statuses",
+            "in your hand"
+        ],120,c.source,False))
+
+class herbal_aroma(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Whenever you draw",
+            "a status, draw 1"
+        ],150,c.source,False))
+
+class mineral_aroma(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        c.source.b.minAroma += 1
+
+class pour_out_heart(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Add an emotional",
+            "to your discard pile"
+        ],180,c.source,False))
+        self.status()
+        c.source.energy += 2
+
+class one_more_glass(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Add a dazed",
+            "to your discard pile",
+            "draw 2"
+        ],180,c.source,False))
+        self.status()
+        c.source.energy += 2
+
+class sommelier(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        c.source.b.sommelier += 1
+
+class grape_trap(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.harmful = True
+        self.selfTarget = False
+
+    def play(self):
+        for g in range(c.source.b.grapesPlayed):
+            grapeToPlay = grape()
+            grapeToPlay.sips = 0
+            grape().play(random.choice(c.g.enemies))
+        iHandler.queue.append(instruction([
+            f"take {c.source.b.grapesPlayed} sips",
+        ],210,c.source,False))
+
+class grapeshot(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        c.source.b.grapeshot += 1
+        iHandler.queue.append(instruction([
+            "Add 3 grapes",
+            "to your hand"
+        ],180,c.source,False))
+
+class bottle_smack(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.dmg = 3
+        self.harmful = True
+        self.selfTarget = False
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Exhausted",
+        ],120,c.source,False))
+        self.damage()
+
+class vacuum_seal(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        c.source.b.buffer += 2
+        iHandler.queue.append(instruction([
+            "Exhausted",
+        ],120,c.source,False))
 
 #region DESIGNATED DRIVER
+
+class supply_bag(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = False
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Give a player",
+            "a simple potion"
+        ],120,c.source,False))
+
+class not_for_me(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        c.source.b.drinkSafe += 1
+
+class carry(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.block = 2
+        self.harmful = False
+        self.selfTarget = False
+
+    def play(self):
+        self.protect(c.target)
+
+class hit_and_run(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.block = 2
+        self.dmg = 2
+        self.harmful = True
+        self.selfTarget = False
+
+    def play(self):
+        self.protect()
+        self.damage()
+
+class the_good_stuff(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 2
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Give a player",
+            "a rare potion",
+            "exhausted"
+        ],120,c.source,False))
+
+class raid_trunk(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "draw 3 cards",
+            "exhausted"
+        ],120,c.source,False))
+
+class be_responsible(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Exhaust a card",
+            "in someones hand"
+        ],120,c.source,False))
+
+class offer_lift(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Another player draws",
+            "a card of their choice"
+        ],120,c.source,False))
+
+class cherry_pick(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Discard any number",
+            "from draw pile"
+        ],120,c.source,False))
+
+class sober_focus(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        if c.source.b.drinksThisCombat > 0:
+            iHandler.queue.append(instruction([
+                "Drank this combat!"
+            ],120,c.source,False))
+        else:
+            c.source.energy += 3
+
+class wake_up_call(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        if c.source.energy > 0:
+            iHandler.queue.append(instruction([
+                f"All players draw {c.source.energy}"
+            ],120,None,False))
+        c.source.energy = 0
+
+class line_the_stomach(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.block = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        for p in c.g.players:
+            self.protect(p)
+
+class check_in(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+        self.harmful = False
+        self.selfTarget = False
+
+    def play(self):
+        self.heal(c.source.energy,c.target)
+        c.source.energy = 0
+
+class maybe_just_one(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+        self.sips = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        self.sip()
+        c.source.energy += 2
+
+class rules_broken(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        if c.source.b.drinksThisCombat > 0:
+            self.draw(c.source.b.drinksThisCombat)
+        else:
+            iHandler.queue.append(instruction([
+                "No drinks taken"
+            ],120,None,False))
+
+class believe_in_you(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 0
+        self.harmful = False
+        self.selfTarget = False
+
+    def play(self):
+        c.target.energy += 2
+
+class freshen_up(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 1
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        iHandler.queue.append(instruction([
+            "Exhaust any number",
+            "exhausted"
+        ],120,None,False))
+
+class sealant(card):
+    def __init__(self):
+        super().__init__()
+        self.cost = 3
+        self.harmful = False
+        self.selfTarget = True
+
+    def play(self):
+        for p in c.g.players:
+            p.hp = p.maxHp
+
+        iHandler.queue.append(instruction([
+            "exhausted"
+        ],90,None,False))
