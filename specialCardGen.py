@@ -3,6 +3,8 @@ import numpy as np
 
 cards = [ # template, name, type, image, description
     ["./art/cards/misc/enemyTemplate.png","cultist","enemy","./art/enemies/cultist.png",["Also $summon$ all", "other $cultists$"]],
+    ["./art/cards/misc/enemyTemplate.png","cultist","enemy","./art/enemies/cultist.png",["Also $summon$ all", "other $cultists$"]],
+    ["./art/cards/misc/enemyTemplate.png","cultist","enemy","./art/enemies/cultist.png",["Also $summon$ all", "other $cultists$"]],
 ]
 
 from PIL import Image, ImageDraw, ImageFont
@@ -40,6 +42,13 @@ def overlay(img: cv2.typing.MatLike,subimg: cv2.typing.MatLike,x: int,y: int,cap
         tSize, _ = cv2.getTextSize(caption,cv2.FONT_HERSHEY_SIMPLEX,1,2)
         cv2.putText(img,caption,(x+s[0]//2-tSize[0]//2,y+s[1]+35),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,0),2)
 
+def overlay_alpha(img: cv2.typing.MatLike, subimg: cv2.typing.MatLike, x:int, y:int):
+    s = subimg.shape
+    for a in range(0,s[0]):
+        for b in range(0,s[1]):
+            if subimg[a,b,3]>0.001:
+                img[y+a,x+b]=subimg[a,b][0:3]
+
 def putTextPlus(img,objs,pos,size):
     font = ImageFont.truetype("./misc/kreon.ttf",size)
     hSize = 0
@@ -60,15 +69,15 @@ def placeCard(img:cv2.typing.MatLike, card: cv2.typing.MatLike,x:int,y:int,name:
     overlay(img,card,x,y)
 
     #image
-    overlay(img,image,x+220,y+100)
+    overlay_alpha(img,image,x+230,y+160)
 
     #name
     font = ImageFont.truetype("./misc/kreon.ttf",60)
     img = putTextPIL(img,name,(x+340-font.getmask(name).getbbox()[2]//2,y+70),60,(255,255,255),True,(0,0,0))
 
     #type
-    font = ImageFont.truetype("./misc/kreon.ttf",45)
-    img = putTextPIL(img,ctype,(x+345-font.getmask(ctype).getbbox()[2]//2,y+480),45,(255,255,255),True,(0,0,0))
+    font = ImageFont.truetype("./misc/kreon.ttf",38)
+    img = putTextPIL(img,ctype,(x+350-font.getmask(ctype).getbbox()[2]//2,y+480),38,(255,255,255),True,(0,0,0))
 
     #description
     font = ImageFont.truetype("./misc/kreon.ttf",55)
@@ -115,7 +124,7 @@ for c in cards:
         negBorderX:card.shape[1]-negBorderX,
     ] #crop
 
-    A4image = placeCard(A4image,card,x,y,c[1],c[2],cv2.imread(c[3]),c[4])
+    A4image = placeCard(A4image,card,x,y,c[1],c[2],cv2.resize(cv2.imread(c[3],cv2.IMREAD_UNCHANGED),None,fx=0.8,fy=0.8),c[4])
 
     blankPage = False
     x+=card.shape[1]+offset
