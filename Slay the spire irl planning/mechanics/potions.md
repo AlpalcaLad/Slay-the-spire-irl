@@ -19,6 +19,10 @@ Exhaust up to 2 cards
 
 Deal 2 damage potion
 
+potential other simple potions
+- Heal 1 hp
+- Lower strength of target by 1 this turn
+
 RARE POTIONS
 +1 max hp permanently
 

@@ -125,16 +125,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "mechanics/buffs and debuffs.md",
+                "file": "mechanics/potions.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "buffs and debuffs"
+              "title": "potions"
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 8
       }
     ],
     "direction": "vertical"
@@ -297,15 +297,15 @@
       "bases:Create new base": false
     }
   },
-  "active": "893a1c9de76a0102",
+  "active": "e6d5ad999582815d",
   "lastOpenFiles": [
+    "mechanics/buffs and debuffs.md",
+    "characters/Beer master.md",
     "characters/Designated driver.md",
     "characters/Wine connoisseur.md",
     "mechanics/score.md",
     "mechanics/potions.md",
     "characters/Cocktail mixer.md",
-    "characters/Beer master.md",
-    "mechanics/buffs and debuffs.md",
     "events.md",
     "core/relics.md",
     "mechanics/brew/peach schnapps.md",

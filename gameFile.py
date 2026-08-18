@@ -507,6 +507,7 @@ class game():
         self.eliteCombat = False
 
         self.startTime = time.time()
+        self.score = 0
 
     def question(self):
         qVal = None
@@ -648,7 +649,51 @@ class game():
 
         elif cardText.startswith("pot"):
             #potions
-            pass
+            match cardText:
+                case "potWeak":
+                    if self.inCombat: c.target.b.weak += 1
+                case "potStrength":
+                    if self.inCombat: c.target.b.strength += 1
+                case "potDraw":
+                    if self.inCombat: iHandler.queue.append(instruction([
+                        "draw 2 cards"
+                    ],90,c.target))
+                case "potVuln":
+                    if self.inCombat: c.target.b.vulnerable += 1
+                case "potTipsy":
+                    if self.inCombat: c.target.b.tipsy += 3
+                case "potEnergy":
+                    if self.inCombat and c.target.friendly:
+                        c.target.energy += 2
+                case "potExhaust":
+                    if self.inCombat: iHandler.queue.append(instruction([
+                        "exhaust 2 cards"
+                    ],90,c.target))
+                case "potDamage":
+                    if self.inCombat: c.target.damage(2)
+                case "potRMaxHP":
+                    if c.target.friendly:
+                        c.target.hpMax += 1
+                        c.target.hp += 1
+                case "potRStrength":
+                    if c.target.friendly:
+                        c.target.b.permaStrength += 1
+                        if self.inCombat:
+                            c.target.b.strength += 1
+                case "potRDamage":
+                    if self.inCombat: c.target.damage(6)
+                case "potRScore":
+                    self.score += 5
+                case "potRStun":
+                    if self.inCombat and not c.target.friendly:
+                        e:enemy = c.target
+                        e.intentions.insert(0,intent(e,"stun",[],False))
+                case "potRRemove":
+                    iHandler.queue.append(instruction([
+                        "permenantly remove a card"
+                    ],90,c.target))
+                case _:
+                    pass
 
         elif len(cardText)==2: #pub quiz answer
             if len(iHandler.active)>0 and len(iHandler.active[0].options)>=int(cardText[1]):
