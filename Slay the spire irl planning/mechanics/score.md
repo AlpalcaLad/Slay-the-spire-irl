@@ -8,11 +8,11 @@ defeating an enemy - 2 score
 
 defeating an elite - 5 score
 
-(60 - minutes spent in run) points
+(30 - minutes spent in run/4) points   REMOVED
 
 in shop - spend 1 gold for 2 score and 1 sour shot
 
-
+ 
 
 in boss =>
 

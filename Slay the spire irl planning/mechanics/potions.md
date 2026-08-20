@@ -21,7 +21,7 @@ Deal 2 damage potion
 
 potential other simple potions
 - Heal 1 hp
-- Lower strength of target by 1 this turn
+- Next card this turn is free to play
 
 RARE POTIONS
 +1 max hp permanently

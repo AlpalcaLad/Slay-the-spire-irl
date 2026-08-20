@@ -1,10 +1,48 @@
 import cv2
 import numpy as np
 
-cards = [ # template, name, type, image, description
-    ["./art/cards/misc/enemyTemplate.png","cultist","enemy","./art/enemies/cultist.png",["Also $summon$ all", "other $cultists$"]],
-    ["./art/cards/misc/enemyTemplate.png","cultist","enemy","./art/enemies/cultist.png",["Also $summon$ all", "other $cultists$"]],
-    ["./art/cards/misc/enemyTemplate.png","cultist","enemy","./art/enemies/cultist.png",["Also $summon$ all", "other $cultists$"]],
+cards = [ # template, name, type, image, description, [xOff, yOff, scale]
+    #region enemies
+    # ["./art/cards/misc/enemyTemplate.png","cultist","enemy","./art/enemies/cultist.png",["Also $summon$ all", "other $cultists$"],[0,0,0.75]],
+    # ["./art/cards/misc/enemyTemplate.png","cultist","enemy","./art/enemies/cultist.png",["Also $summon$ all", "other $cultists$"],[0,0,0.75]],
+    # ["./art/cards/misc/enemyTemplate.png","cultist","enemy","./art/enemies/cultist.png",["Also $summon$ all", "other $cultists$"],[0,0,0.75]],
+    # ["./art/cards/misc/enemyTemplate.png","Fossil Stalker","enemy","./art/enemies/fossil_stalker.png",[],[-55,40,1]],
+    # ["./art/cards/misc/enemyTemplate.png","Frog Knight","enemy","./art/enemies/frog_knight.png",[],[0,0,0.6]],
+    # ["./art/cards/misc/eliteTemplate.png","Giant Head","elite","./art/enemies/giant_head.png",[],[-65,40,0.7]],
+    # ["./art/cards/misc/eliteTemplate.png","Lagavulin","elite","./art/enemies/lagavulin.png",[],[-10,0,0.7]],
+    # ["./art/cards/misc/enemyTemplate.png","Leaf Slime","enemy","./art/enemies/leaf_slime.png",["Also $summon$", "$mawler$"],[0,40,0.5]],
+    # ["./art/cards/misc/enemyTemplate.png","Mawler","enemy","./art/enemies/mawler.png",[],[-20,30,0.75]],
+    # ["./art/cards/misc/enemyTemplate.png","Nibbit","enemy","./art/enemies/nibbit.png",[],[-40,65,0.75]],
+    # ["./art/cards/misc/enemyTemplate.png","Orb Walker","enemy","./art/enemies/orb_walker.png",[],[0,40,0.75]],
+    # ["./art/cards/misc/eliteTemplate.png","Skulking Colony","elite","./art/enemies/skulking_colony.png",[],[0,0,0.75]],
+    # ["./art/cards/misc/enemyTemplate.png","Slaver","enemy","./art/enemies/slaverA.png",["Also $summon$ the", "other $slaver$"],[-20,40,0.75]],
+    # ["./art/cards/misc/enemyTemplate.png","Slaver","enemy","./art/enemies/slaverB.png",["Also $summon$ the", "other $slaver$"],[-20,40,0.75]],
+    # ["./art/cards/misc/eliteTemplate.png","Terror Eel","elite","./art/enemies/terror_eel.png",[],[-60,-30,0.9]],
+    # ["./art/cards/misc/enemyTemplate.png","Thief","enemy","./art/enemies/thief.png",["Also $summon$ the", "other $thief$"],[-10,40,0.85]],
+    # ["./art/cards/misc/enemyTemplate.png","Thief","enemy","./art/enemies/thief.png",["Also $summon$ the", "other $thief$"],[-10,40,0.85]],
+    # ["./art/cards/misc/enemyTemplate.png","Vine Shambler","enemy","./art/enemies/vine_shambler.png",[],[0,0,0.7]],
+    
+    #region potions
+    # ["./art/cards/misc/potionTemplate.png","Weak Pot","potion","./art/potions/weak.png",["Apply 1 $weak$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionTemplate.png","Strength Pot","potion","./art/potions/strength.png",["Gain 1 $strength$","$this combat$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionTemplate.png","Vulnerable Pot","potion","./art/potions/vulnerable.png",["Apply 1 $vulnerable$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionTemplate.png","Tipsy Pot","potion","./art/potions/tipsy.png",["Apply 3 $tipsy$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionTemplate.png","Energy Pot","potion","./art/potions/energy.png",["Gain 2 $energy$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionTemplate.png","Exhaust Pot","potion","./art/potions/exhaust.png",["$Exhaust$ 2 cards","in your $hand$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionTemplate.png","Fire Pot","potion","./art/potions/damage.png",["Deal 2 $damage$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionTemplate.png","Heal Pot","potion","./art/potions/heal.png",["$Heal$ 1 hp"],[20,60,2.5]],
+    # ["./art/cards/misc/potionTemplate.png","Free Pot","potion","./art/potions/potFree.png",["The next card","you play is","$free$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionRareTemplate.png","Fruit Juice","potion","./art/potions/maxHp.png",["Gain 1 $max hp$", "$permanently$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionRareTemplate.png","Buff Pot","potion","./art/potions/permStrength.png",["Gain 1 $strength$", "$permanently$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionRareTemplate.png","Fruit Juice","potion","./art/potions/maxHp.png",["Gain 1 $max hp$", "$permanently$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionRareTemplate.png","A Fucking Rock","potion","./art/potions/rock.png",["Deal 6 $damage$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionRareTemplate.png","Score Pot","potion","./art/potions/score.png",["Gain 5 $score$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionRareTemplate.png","Stun Stew","potion","./art/potions/stun.png",["$Stun$ the enemy", "this turn"],[20,60,2.5]],
+    # ["./art/cards/misc/potionRareTemplate.png","Excorcism","potion","./art/potions/remove.png",["$Remove$ a card", "from your deck", "$permanently$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionRareTemplate.png","Plating Pot","potion","./art/potions/plating.png",["Gain 2 $plating$", "$each combat$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionRareTemplate.png","Ritual Pot","potion","./art/potions/ritual.png",["Gain 1 $ritual$", "$this combat$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionRareTemplate.png","Refreshment","potion","./art/potions/fullHeal.png",["Fully $heal$"],[20,60,2.5]],
+    # ["./art/cards/misc/potionRareTemplate.png","Reward Pot","potion","./art/potions/reward.png",["Pick from 5 cards", "Add 1 to deck","$permanently$"],[20,60,2.5]],
 ]
 
 from PIL import Image, ImageDraw, ImageFont
@@ -65,15 +103,15 @@ def putTextPlus(img,objs,pos,size):
 
     return img
 
-def placeCard(img:cv2.typing.MatLike, card: cv2.typing.MatLike,x:int,y:int,name:str,ctype:str,image:cv2.typing.MatLike,description:list[str]):
+def placeCard(img:cv2.typing.MatLike, card: cv2.typing.MatLike,x:int,y:int,name:str,ctype:str,image:cv2.typing.MatLike,description:list[str],positioning:list):
     overlay(img,card,x,y)
 
     #image
-    overlay_alpha(img,image,x+230,y+160)
+    overlay_alpha(img,image,x+230+positioning[0],y+160+positioning[1])
 
     #name
     font = ImageFont.truetype("./misc/kreon.ttf",60)
-    img = putTextPIL(img,name,(x+340-font.getmask(name).getbbox()[2]//2,y+70),60,(255,255,255),True,(0,0,0))
+    img = putTextPIL(img,name,(x+350-font.getmask(name).getbbox()[2]//2,y+70),60,(255,255,255),True,(0,0,0))
 
     #type
     font = ImageFont.truetype("./misc/kreon.ttf",38)
@@ -124,7 +162,7 @@ for c in cards:
         negBorderX:card.shape[1]-negBorderX,
     ] #crop
 
-    A4image = placeCard(A4image,card,x,y,c[1],c[2],cv2.resize(cv2.imread(c[3],cv2.IMREAD_UNCHANGED),None,fx=0.8,fy=0.8),c[4])
+    A4image = placeCard(A4image,card,x,y,c[1],c[2],cv2.resize(cv2.imread(c[3],cv2.IMREAD_UNCHANGED),None,fx=c[5][2],fy=c[5][2]),c[4],c[5])
 
     blankPage = False
     x+=card.shape[1]+offset

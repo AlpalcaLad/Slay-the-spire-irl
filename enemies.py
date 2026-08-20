@@ -5,10 +5,6 @@ from cards import *
 
 def getenemy(enemyname):
     match enemyname:
-        case "enemyrat":
-            return enemyrat
-        case "enemybird":
-            return enemybird
         case "byrdonis":
             return byrdonis
         case "cultist":
@@ -212,6 +208,7 @@ class intent():
                 #region TODO escape fog
             case _:
                 return
+
 #region enemy
 class enemy(entity):
     def __init__(self,g):
@@ -261,34 +258,106 @@ class enemy(entity):
             self.g.enemies.remove(self)
             #todo mini explosion animation
 
-class enemyrat(enemy):
+#region boss
+
+class scorebar():
+    def __init__(self,parent : entity,game,x,y,w,h,r=8):
+        self.g = game
+        self.p = parent
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.r = r
+
+    def draw(self):
+        #block
+        hpBarCol = (20,255,20)
+        if self.p.block > 0:
+            self.g.screen.blit(
+                self.g.a.blockAsset,
+                (
+                    self.x-40,
+                    self.y-13
+                ),
+            )
+            drawTextOutlined(self.g,str(self.p.block),(self.x-10,self.y-3),(20,20,100),(255,255,255))
+            hpBarCol = (100,180,255)
+
+        #score
+        ratio = self.p.hp / max(1,self.p.hpMax)
+        pygame.draw.rect(self.g.screen,"red",(self.x,self.y,self.w,self.h), border_radius=self.r)
+        pygame.draw.rect(self.g.screen,hpBarCol,(self.x,self.y,self.w*ratio,self.h), border_radius=self.r)
+        self.g.screen.blit(
+            self.g.font.render(
+                str(self.p.hp)+"/"+str(self.p.hpMax), True, (255,255,255)
+            ),
+            (self.x+self.w+14,self.y-3)
+        )
+
+        #energy
+        if self.p.energy>0:
+            self.g.screen.blit(
+                self.g.a.energyAsset,
+                (
+                    self.x+self.w+8,
+                    self.y-43
+                ),
+            )
+            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+42,self.y-38),(100,60,20),(255,255,255))
+        elif self.p.energy==0: #draw dull sprite
+            self.g.screen.blit(
+                self.g.a.noEnergyAsset,
+                (
+                    self.x+self.w+8,
+                    self.y-43
+                ),
+            )
+            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+42,self.y-38),(80,50,10),(160,160,160))
+
+        #buffs and debuffs
+        toDraw = self.p.b.itemise(self.g.a)
+        curX = self.x
+        for e in toDraw:
+            #draw effect
+            drawTextOutlined(self.g,e[0],(curX,self.y+23),(255,255,255),(0,0,0))
+            #blit icon to screen
+            self.g.screen.blit(
+                e[1],
+                (
+                    curX,
+                    self.y+23
+                ),
+            )
+            curX += 50
+
+class boss(enemy):
     def __init__(self,g):
         super().__init__(g)
-        self.hp = 10
+        self.hp = -1
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemyRatArt.png",25)
-    
+        self.s = sprite(self,g,"./art/enemies/byrdonis.png",300)
+        self.s.x=-30
+        self.s.y=-40
+        self.intentions = [
+            intent(self,"attack",[2,1]),
+            intent(self,"attack",[1,3]),
+            intent(self,"buff",["strength",1])
+        ]
+        self.elite = True
+        self.boss = True
+        
     def draw(self):
+        super().draw()
         self.s.draw()
         self.h.draw()
 
-class enemybird(enemy):
-    def __init__(self,g):
-        super().__init__(g)
-        self.hp = 10
-        self.hpMax = self.hp
-        self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemyBirdArt.png",50)
-    
-    def draw(self):
-        self.s.draw()
-        self.h.draw()
 #region byrdonis
 class byrdonis(enemy):
     def __init__(self,g):
         super().__init__(g)
-        self.hp = 12 * len(self.g.players)
+        self.hp = 13 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
         self.s = sprite(self,g,"./art/enemies/byrdonis.png",300)
@@ -305,11 +374,11 @@ class byrdonis(enemy):
         super().draw()
         self.s.draw()
         self.h.draw()
-
+#region cultist
 class cultist(enemy):
     def __init__(self,g):
         super().__init__(g)
-        self.hp = 8  * len(self.g.players)
+        self.hp = 7  * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
         self.s = sprite(self,g,"./art/enemies/cultist.png",200)
@@ -326,7 +395,7 @@ class cultist(enemy):
 class fossil_stalker(enemy):
     def __init__(self,g):
         super().__init__(g)
-        self.hp = 9 * len(self.g.players)
+        self.hp = 10 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
         self.s = sprite(self,g,"./art/enemies/fossil_stalker.png",200)
@@ -395,7 +464,7 @@ class giant_head(enemy):
 class lagavulin(enemy):
     def __init__(self,g):
         super().__init__(g)
-        self.hp = 12 * len(self.g.players)
+        self.hp = 14 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
         self.s = sprite(self,g,"./art/enemies/lagavulin_sleep.png",300)
@@ -467,7 +536,7 @@ class leaf_slime(enemy):
 class mawler(enemy):
     def __init__(self,g):
         super().__init__(g)
-        self.hp = 7 * len(self.g.players)
+        self.hp = 8 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
         self.s = sprite(self,g,"./art/enemies/mawler.png",200)
@@ -512,9 +581,7 @@ class orb_walker(enemy):
         self.s = sprite(self,g,"./art/enemies/nibbit.png",200)
         self.intentions = [
             intent(self,"attack",[1,3]),
-            intent(self,"mystery",["AllInstruction",
-                [["Add 1 emotional","to draw pile"],180]
-            ]),
+            intent(self,"drink",[1]),
             intent(self,"buff",["strength",1]),
         ]
     

@@ -173,6 +173,15 @@ qrcodes = [
     "potRRemove"
 ]
 
+qrcodes = [
+    "potFree",
+    "potHeal",
+    "potRPlating",
+    "potRRitual",
+    "potRFullHeal",
+    "potRReward"
+]
+
 A4pages = []
 A4image = np.ones((2480,3508,3),dtype=np.uint8)*255
 

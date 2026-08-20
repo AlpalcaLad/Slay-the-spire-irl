@@ -84,6 +84,7 @@ class buffHandler():
         self.gin = 0
 
         self.permaStrength = 0
+        self.permaPlating = 0
 
         #special
         self.store: list[tuple] = [] #stored effects
@@ -132,7 +133,7 @@ class buffHandler():
         self.buffer = 0
     
         self.ritual = 0
-        self.plating = 0
+        self.plating = self.permaPlating
         self.hardenedShell = 0
         self.damageTaken = 0
         self.shriek = 0
@@ -640,7 +641,7 @@ class game():
             ]
 
             rewards[correctAns]=instruction(
-                ["Correct! You recieve 3 gold as a reward."],
+                ["Correct! You recieve 1 gold each as a reward."],
                 300, None, True
             )
             iHandler.queue.append(instruction(
@@ -671,6 +672,10 @@ class game():
                     ],90,c.target))
                 case "potDamage":
                     if self.inCombat: c.target.damage(2)
+                case "potHeal":
+                    c.target.hp = min(c.target.hp + 1, c.target.hpMax)
+                case "potFree":
+                    c.target.b.freeCard += 1
                 case "potRMaxHP":
                     if c.target.friendly:
                         c.target.hpMax += 1
@@ -692,6 +697,16 @@ class game():
                     iHandler.queue.append(instruction([
                         "permenantly remove a card"
                     ],90,c.target))
+                case "potRPlating":
+                    c.target.b.permaPlating+=1
+                case "potRRitual":
+                    c.target.b.ritual += 1
+                case "potRFullHeal":
+                    c.target.hp = c.target.hpMax
+                case "potRReward":
+                    iHandler.queue.append(instruction([
+                        "Gain a 5-option card reward"
+                    ],120,c.target))
                 case _:
                     pass
 
@@ -771,12 +786,12 @@ class game():
             if self.eliteCombat:
                 self.eliteCombat = False
                 iHandler.queue.append(instruction(
-                    ["Everyone gets 1 rare potion","Everyone gets 1 card reward","2 gold"],
+                    ["Everyone gets 1 rare potion","Everyone gets 1 card reward","1 gold each"],
                     300,blocking=True
                 ))
             else:
                 iHandler.queue.append(instruction(
-                    ["Everyone gets 1 simple potion","Everyone gets 1 card reward","1 gold"],
+                    ["Everyone gets 1 simple potion","Everyone gets 1 card reward","1 gold each"],
                     300,blocking=True
                 ))
         
