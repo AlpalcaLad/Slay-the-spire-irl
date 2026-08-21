@@ -51,6 +51,7 @@ cards = [ # art, name, type, energy, description
     # ("./art/cards/winecon/defend_wine.png","Defend", "skill", 1,["Gain 1 $Block$"]),
     # ("./art/cards/winecon/strike_wine.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
     # ("./art/cards/winecon/defend_wine.png","Defend", "skill", 1,["Gain 1 $Block$"]),
+    ("./art/cards/winecon/vacuum_seal.png","Vacuum Seal", "power", 2,["Gain 2 $Buffer$"]),
 
     #region #Beer master
     # ("./art/cards/beer/strike.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
@@ -111,19 +112,35 @@ cards = [ # art, name, type, energy, description
     # ("./art/cards/cocktail/alchemist.png","Alchemist", "power", 1,["Whenever you $Brew$", "Gain 1 $Block$"]),
 
     #designated driver
-    ("./art/cards/driver/strike.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
-    ("./art/cards/driver/defend.png","Defend", "skill", 1,["Gain 1 $Block$"]),
-    ("./art/cards/driver/strike.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
-    ("./art/cards/driver/defend.png","Defend", "skill", 1,["Gain 1 $Block$"]),
-    ("./art/cards/driver/strike.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
-    ("./art/cards/driver/defend.png","Defend", "skill", 1,["Gain 1 $Block$"]),
+    # ("./art/cards/driver/strike.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
+    # ("./art/cards/driver/defend.png","Defend", "skill", 1,["Gain 1 $Block$"]),
+    # ("./art/cards/driver/strike.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
+    # ("./art/cards/driver/defend.png","Defend", "skill", 1,["Gain 1 $Block$"]),
+    # ("./art/cards/driver/strike.png","Strike", "attack", 1,["Deal 1 $Damage$"]),
+    # ("./art/cards/driver/defend.png","Defend", "skill", 1,["Gain 1 $Block$"]),
     # ("./art/cards/driver/supply_bag.png","Supply Bag", "skill", 1,["Give a player with", "space a random","$simple potion$"]),
-    ("./art/cards/driver/not_for_me.png","Not For Me", "skill", 1,["You don't need to","$Drink$ next time"]),
+    # ("./art/cards/driver/not_for_me.png","Not For Me", "skill", 1,["You don't need to","$Drink$ next time"]),
     # ("./art/cards/driver/maybe_just_one.png","Maybe Just One", "skill", 0,["Gain 2 $energy$", "take a $sip$"]),
     # ("./art/cards/driver/wake_up_call.png","Wake Up Call", "skill", "X",["all players $Draw$", "X cards"]),
-    ("./art/cards/driver/carry.png","Carry", "skill", 1,["Give another player", "2 $Block$"]),
+    # ("./art/cards/driver/carry.png","Carry", "skill", 1,["Give another player", "2 $Block$"]),
     ("./art/cards/driver/the_good_stuff.png","The Good Stuff", "skill", 2,["Give a player a","random $rare potion$","$exhaust$"]),
-    ("./art/cards/driver/cherry_pick.png","Cherry Pick", "skill", 1,["$Discard$ any number", "of cards from your","$Draw Pile$"]),
+    # ("./art/cards/driver/cherry_pick.png","Cherry Pick", "skill", 1,["$Discard$ any number", "of cards from your","$Draw Pile$"]),
+    ("./art/cards/driver/raid_trunk.png","Raid Trunk", "skill", 1,["$Draw$ 3 cards","exhaust"]),
+    ("./art/cards/driver/be_responsible.png","Be Responsible", "skill", 1,["$Exhaust$ a card", "in another players","hand"]),
+    ("./art/cards/driver/offer_lift.png","Offer Lift", "skill", 1,["Another player $draws$","a card of their","choice"]),
+    ("./art/cards/driver/hit_and_run.png","Hit And Run", "attack", 2,["Deal 2 $Damage$","Gain 2 $Block$"]),
+    ("./art/cards/driver/believe_in_you.png","Believe In You", "skill", 0,["Give another player","2 $energy$"]),
+    ("./art/cards/driver/believe_in_you.png","Believe In You", "skill", 0,["Give another player","2 $energy$"]),
+    ("./art/cards/driver/freshen_up.png","Freshen Up", "skill", 1,["$Exhaust$ any number","from your hand","$Exhaust$"]),
+    ("./art/cards/driver/line_the_stomach.png","Line The Stomach", "skill", 1,["All players", "gain 1 $Block$"]),
+    ("./art/cards/driver/rules_broken.png","Rules Broken", "skill", 1,["$Draw$ 1 for each","drink youve had","this combat"]),
+    ("./art/cards/driver/sealant.png","Sealant", "skill", 1,["All players","$heal$ fully", "$Exhaust$"]),
+    ("./art/cards/driver/sober_focus.png","Sober Focus", "skill", 0,["If you havent","drank this combat","gain 3 $energy$"]),
+    ("./art/cards/driver/maybe_just_one.png","Maybe Just One", "skill", 0,["Gain 2 $energy$", "take a $sip$"]),
+
+    #misc
+    ("./art/cards/misc/the_boss.png","The Boss", "boss", -1,["Gain $Score$ for","$Surviving$ and","$Damage$"]),
+
 ]
 
 from PIL import Image, ImageDraw, ImageFont

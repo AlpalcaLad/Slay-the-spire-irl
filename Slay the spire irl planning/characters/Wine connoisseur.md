@@ -35,4 +35,4 @@ findable cards
 [[Bottle smack]] (Deal 3 damage, exhaust, 1 cost ATTACK)
 
 POSSIBLE EXTRA
-[[Vacuum Seal]] (Gain 2 buffer, exhaust, 2 cost SKILL)
+[[Vacuum Seal]] (Gain 2 buffer, 2 cost POWER)

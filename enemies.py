@@ -39,6 +39,8 @@ def getenemy(enemyname):
             return thief
         case "vineshamb":
             return vine_shambler
+        case "boss":
+            return boss
         case _:
             return None
 #region intent
@@ -328,7 +330,7 @@ class boss(enemy):
         self.hp = -1
         self.hpMax = self.hp
         self.h = scorebar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemies/byrdonis.png",300)
+        self.s = sprite(self,g,"./art/enemies/the_boss.png",300)
         self.s.x=-30
         self.s.y=-40
         self.intentions = [
@@ -363,6 +365,9 @@ class boss(enemy):
             self.score += (self.score-self.scoreTarget)/10
         else:
             self.score = self.scoreTarget
+
+        if self.vsp == 0:
+            self.y = lerp(self.y,self.baseY - 30*math.sin(pygame.time.get_ticks() / 360)-16,0.05)
 
         super().draw()
         self.s.draw()

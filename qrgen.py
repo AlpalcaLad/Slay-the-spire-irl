@@ -179,7 +179,8 @@ qrcodes = [
     "potRPlating",
     "potRRitual",
     "potRFullHeal",
-    "potRReward"
+    "potRReward",
+    "rest",
 ]
 
 A4pages = []

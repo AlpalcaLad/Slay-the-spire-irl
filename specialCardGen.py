@@ -45,7 +45,20 @@ cards = [ # template, name, type, image, description, [xOff, yOff, scale]
     # ["./art/cards/misc/potionRareTemplate.png","Reward Pot","potion","./art/potions/reward.png",["Pick from 5 cards", "Add 1 to deck","$permanently$"],[20,60,2.5]],
 
     #admin cards etc
-    
+    ["./art/cards/misc/adminTemplate.png","End Turn","admin",None,["$Ends your turn$","All enemies act"],[20,60,2.5]],
+    ["./art/cards/misc/adminTemplate.png","Reset","admin",None,["$Resets$ whole game"],[20,60,2.5]],
+    ["./art/cards/misc/adminTemplate.png","Kill All","admin",None,["$Kills$ all enemies"],[20,60,2.5]],
+    ["./art/cards/misc/adminTemplate.png","Remove","admin",None,["$Removes$ targetted","entity from game"],[20,60,2.5]],
+
+    ["./art/cards/misc/mysteryTemplate.png","Pub Quiz","quiz",None,["Starts a $pub$","$quiz$ question"],[20,60,2.5]],
+    ["./art/cards/misc/mysteryTemplate.png","Option 1","quiz",None,["$Selects$ option 1"],[20,60,2.5]],
+    ["./art/cards/misc/mysteryTemplate.png","Option 2","quiz",None,["$Selects$ option 2"],[20,60,2.5]],
+    ["./art/cards/misc/mysteryTemplate.png","Option 3","quiz",None,["$Selects$ option 3"],[20,60,2.5]],
+    ["./art/cards/misc/mysteryTemplate.png","Option 4","quiz",None,["$Selects$ option 4"],[20,60,2.5]],
+
+    #["./art/cards/misc/shopTemplate.png","Shop Template","quiz",None,["$Start$ a shop","(optional)"],[20,60,2.5]],
+
+    ["./art/cards/misc/restTemplate.png","Rest Site","quiz",None,["All players","fully $heal$"],[20,60,2.5]],
 ]
 
 from PIL import Image, ImageDraw, ImageFont
@@ -110,7 +123,8 @@ def placeCard(img:cv2.typing.MatLike, card: cv2.typing.MatLike,x:int,y:int,name:
     overlay(img,card,x,y)
 
     #image
-    overlay_alpha(img,image,x+230+positioning[0],y+160+positioning[1])
+    if image is not None:
+        overlay_alpha(img,image,x+230+positioning[0],y+160+positioning[1])
 
     #name
     font = ImageFont.truetype("./misc/kreon.ttf",60)
@@ -165,7 +179,10 @@ for c in cards:
         negBorderX:card.shape[1]-negBorderX,
     ] #crop
 
-    A4image = placeCard(A4image,card,x,y,c[1],c[2],cv2.resize(cv2.imread(c[3],cv2.IMREAD_UNCHANGED),None,fx=c[5][2],fy=c[5][2]),c[4],c[5])
+    if c[3] is not None:
+        A4image = placeCard(A4image,card,x,y,c[1],c[2],cv2.resize(cv2.imread(c[3],cv2.IMREAD_UNCHANGED),None,fx=c[5][2],fy=c[5][2]),c[4],c[5])
+    else:
+        A4image = placeCard(A4image,card,x,y,c[1],c[2],None,c[4],c[5])
 
     blankPage = False
     x+=card.shape[1]+offset

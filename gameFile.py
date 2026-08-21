@@ -41,7 +41,7 @@ class sprite():
             ),
         )
 
-#region Animation
+#region TODO: Animation
 
 class animation():
     def __init__(self,game,folder,animSpeed=0.1,repeat=False,scaleBy=1):
@@ -659,6 +659,13 @@ class game():
 
             iHandler.queue.append(getevent(tempText.replace("event","",1)))
 
+        elif cardText == "rest":
+            if not self.inCombat:
+                for p in self.players:
+                    p.hp = p.hpMax
+                    p.dead = False
+                    p.dying = False
+
         elif cardText=="pubquiz":
             #load up pub quiz question
             quizQ = self.question()
@@ -848,8 +855,8 @@ class game():
             #All players died, show endscreen
             iHandler.queue.append(instruction([
                 "You died...",
-                "You achieved a final score of",
-                f"{self.score} points"
+                "You achieved a final score and time of",
+                f"{self.score} points, {secondsToTime(int(time.time()-self.startTime))}"
             ],-1,None,True))
         
         #render enemies

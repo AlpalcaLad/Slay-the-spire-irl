@@ -94,3 +94,5 @@ def greyscale(surface: pygame.Surface):
 
 def lerp(val1,val2,am):
     return val1 + (val2-val1)*am
+
+def secondsToTime(s): return f"{int(s/3600)}h {int(s/60)-60*int(s/3600)}m {int(s)-60*int(s/60)}s"

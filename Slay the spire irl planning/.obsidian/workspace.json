@@ -162,7 +162,7 @@
             }
           }
         ],
-        "currentTab": 6
+        "currentTab": 8
       }
     ],
     "direction": "vertical"
@@ -326,16 +326,16 @@
       "bases:Create new base": false
     }
   },
-  "active": "cb594f4c4854dfa6",
+  "active": "66c9925f363bb623",
   "lastOpenFiles": [
     "characters/Beer master.md",
-    "characters/Designated driver.md",
-    "characters/Cocktail mixer.md",
     "characters/Wine connoisseur.md",
+    "characters/Cocktail mixer.md",
+    "characters/Designated driver.md",
+    "mechanics/shop.md",
     "mechanics/score.md",
     "core/Main concept.md",
     "events.md",
-    "mechanics/shop.md",
     "mechanics/potions.md",
     "mechanics/buffs and debuffs.md",
     "core/relics.md",
