@@ -118,7 +118,7 @@ class intent():
 
     def damage(self, am: int, times: int):
         for player in self.g.players:
-            if p.dead: continue
+            if player.dead: continue
             dmg = am
 
             strength = self.p.b.strength
@@ -249,12 +249,8 @@ class enemy(entity):
 
         if len(self.intentions) > 0:
             cur = self.intentions.pop(0)
-            if cur.action in ["attack","attack_defend"]:
-                self.vsp = -6
-            else:
-                cur.act()
-                if cur.repeat:
-                    self.intentions.append(cur)
+            self.vsp = -5
+            self.intentionWaiting = cur
 
     def startturn(self):
         self.block = 0
@@ -662,7 +658,6 @@ class skulking_colony(enemy):
                 dmg -= max(0,self.b.damageTaken-self.b.hardenedShell)
         else:
             return
-        
         self.hp -= dmg
 
         if self.hp <= 0:
@@ -760,7 +755,7 @@ class thief(enemy):
     def act(self):
         if self.intentions[0].action=="attack":
             iHandler.queue.append(instruction(
-                ["Thief steals 1 gold!"],120,self
+                ["Thief steals 1 gold!"],120,random.choice(c.g.players)
             ))
         super().act()
     

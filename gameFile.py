@@ -75,11 +75,23 @@ class assetHolder():
         self.attackDefendAsset = self.load("./art/icons/attackDefendIcon.png",35)
         self.escapeAsset = self.load("./art/icons/escapeIcon.png",35)
 
-        self.ritualAsset = self.load("./art/icons/ritualIcon.png")
-        self.thornsAsset = self.load("./art/icons/thornsIcon.png")
+        self.ritualAsset = self.load("./art/icons/ritualIcon.png",35)
+        self.thornsAsset = self.load("./art/icons/thornsIcon.png",35)
         self.platingAsset = self.load("./art/icons/platingIcon.png",25)
         self.shellAsset = self.load("./art/icons/hardenedShell.png",25)
         self.shriekAsset = self.load("./art/icons/shriekIcon.png",25)
+
+        self.ginAsset = self.load("./art/icons/ginIcon.png",25)
+        self.bufferAsset = self.load("./art/icons/bufferIcon.png",25)
+
+        #hellsraiser, grapeVine, herbAroma, minAroma, sommelier, alchemist, grapeshot
+        self.hellsraiserAsset = self.load("./art/icons/hellIcon.png",25)
+        self.vineAsset = self.load("./art/icons/vineIcon.png",25)
+        self.herbAsset = self.load("./art/icons/herbIcon.png",25)
+        self.minAsset = self.load("./art/icons/minIcon.png",25)
+        self.sommelierAsset = self.load("./art/icons/grapeDamageIcon.png",35)
+        self.alchemistAsset = self.load("./art/icons/alchemistIcon.png",25)
+        self.grapeshotAsset = self.load("./art/icons/grapeshotIcon.png",25)
 
     def load(self,path,scale = 45):
         return pygame.transform.scale(pygame.image.load(path).convert_alpha(),(scale,scale))
@@ -164,12 +176,12 @@ class buffHandler():
         # if self.frail>0: self.frail -= 1
         # if self.wasted>0: self.wasted -= 1
         if self.ritual>0: self.strength += self.ritual
-        if self.plating>0:
-            self.p.block += self.plating
-            self.plating-=1
         self.freeCard = 0
 
     def endturn(self):
+        if self.plating>0:
+            self.p.block += self.plating
+            self.plating-=1
         if self.weak>0: self.weak -= 1
         if self.vulnerable>0: self.vulnerable -= 1
         if self.frail>0: self.frail -= 1
@@ -193,6 +205,24 @@ class buffHandler():
             effects.append((str(self.hardenedShell-self.damageTaken),assets.shellAsset))
         if self.shriek>0:
             effects.append((str(self.shriek),assets.shriekAsset))
+        if self.gin>0:
+            effects.append((str(self.gin),assets.ginAsset))
+        if self.buffer>0:
+            effects.append((str(self.buffer),assets.bufferAsset))
+        if self.hellsraiser>0:
+            effects.append((-1,assets.hellsraiserAsset))
+        if self.alchemist>0:
+            effects.append((-1,assets.alchemistAsset))
+        if self.grapeshot>0:
+            effects.append((-1,assets.grapeshotAsset))
+        if self.herbAroma>0:
+            effects.append((-1,assets.herbAsset))
+        if self.minAroma>0:
+            effects.append((-1,assets.minAsset))
+        if self.sommelier>0:
+            effects.append((str(self.sommelier),assets.sommelierAsset))
+        if self.grapeVine>0:
+            effects.append((-1,assets.vineAsset))
 
         return effects
 
@@ -210,6 +240,7 @@ class entity():
 
         self.acting = False
         self.dead = False
+        self.dying = False
 
         #buffs and debuffs
         self.b = buffHandler(self)
@@ -296,7 +327,10 @@ class healthbar():
         curX = self.x
         for e in toDraw:
             #draw effect
-            drawTextOutlined(self.g,e[0],(curX,self.y+23),(255,255,255),(0,0,0))
+            if e[0] != -1:
+                drawTextOutlined(self.g,e[0],(curX,self.y+23),(255,255,255),(0,0,0))
+            else:
+                curX -= 15
             #blit icon to screen
             self.g.screen.blit(
                 e[1],
@@ -343,21 +377,21 @@ class player(entity):
             case "cocktail":
                 self.hp=10
                 self.deck = []
-                self.s = sprite(self,g,"./art/player1Art.png")
+                self.s = sprite(self,g,"./art/characters/cocktail.png",scaleBy=0.2)
                 self.x = 2*self.g.W//5-55
                 self.hatchEffects = []
             case "beermaster":
                 self.hp=10
-                self.s = sprite(self,g,"./art/player1Art.png")
+                self.s = sprite(self,g,"./art/characters/beer.png",scaleBy=0.2)
                 self.x = 1*self.g.W//5-45
             case "winecon":
                 self.hp=10
-                self.s = sprite(self,g,"./art/player1Art.png")
+                self.s = sprite(self,g,"./art/characters/wine.png",scaleBy=0.2)
                 self.x = 3*self.g.W//5-35
                 self.wine = 0
             case "driver":
                 self.hp=10
-                self.s = sprite(self,g,"./art/player1Art.png")
+                self.s = sprite(self,g,"./art/characters/driver.png",scaleBy=0.2)
                 self.x = 4*self.g.W//5-25
             case _:
                 self.s = sprite(self,g,"./art/player1Art.png")
@@ -365,7 +399,7 @@ class player(entity):
         self.hpMax = self.hp
         self.className = className
 
-        self.sd = sprite(self,g,surface=greyscale(self.s),asset="")
+        self.sd = sprite(self,g,surface=greyscale(self.s.img),asset="")
 
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
 
@@ -665,6 +699,12 @@ class game():
                     p.hp = max(p.hp,p.hpMax//2)
                     p.dead = False
                     p.dying = False
+
+        elif cardText == "shopShot":
+            self.addScore(2,"shop")
+            iHandler.queue.append(instruction(
+                ["Take a shot!"],-1,None,True,rewards
+            ))
 
         elif cardText=="pubquiz":
             #load up pub quiz question
