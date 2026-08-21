@@ -272,7 +272,6 @@ class scorebar():
 
     def draw(self):
         #block
-        hpBarCol = (20,255,20)
         if self.p.block > 0:
             self.g.screen.blit(
                 self.g.a.blockAsset,
@@ -282,38 +281,16 @@ class scorebar():
                 ),
             )
             drawTextOutlined(self.g,str(self.p.block),(self.x-10,self.y-3),(20,20,100),(255,255,255))
-            hpBarCol = (100,180,255)
 
         #score
-        ratio = self.p.hp / max(1,self.p.hpMax)
-        pygame.draw.rect(self.g.screen,"red",(self.x,self.y,self.w,self.h), border_radius=self.r)
-        pygame.draw.rect(self.g.screen,hpBarCol,(self.x,self.y,self.w*ratio,self.h), border_radius=self.r)
+        width = c.g.score*2
+        pygame.draw.rect(self.g.screen,"purple",(self.x,self.y,self.w+width,self.h), border_radius=self.r)
         self.g.screen.blit(
             self.g.font.render(
-                str(self.p.hp)+"/"+str(self.p.hpMax), True, (255,255,255)
+                str(self.p.score), True, (255,255,255)
             ),
-            (self.x+self.w+14,self.y-3)
+            (self.x+self.w+14+width,self.y-3)
         )
-
-        #energy
-        if self.p.energy>0:
-            self.g.screen.blit(
-                self.g.a.energyAsset,
-                (
-                    self.x+self.w+8,
-                    self.y-43
-                ),
-            )
-            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+42,self.y-38),(100,60,20),(255,255,255))
-        elif self.p.energy==0: #draw dull sprite
-            self.g.screen.blit(
-                self.g.a.noEnergyAsset,
-                (
-                    self.x+self.w+8,
-                    self.y-43
-                ),
-            )
-            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+42,self.y-38),(80,50,10),(160,160,160))
 
         #buffs and debuffs
         toDraw = self.p.b.itemise(self.g.a)
@@ -336,14 +313,16 @@ class boss(enemy):
         super().__init__(g)
         self.hp = -1
         self.hpMax = self.hp
-        self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
+        self.h = scorebar(self,self.g,self.x,self.y+200,125,20)
         self.s = sprite(self,g,"./art/enemies/byrdonis.png",300)
         self.s.x=-30
         self.s.y=-40
         self.intentions = [
-            intent(self,"attack",[2,1]),
+            intent(self,"drink",[1],False),
+            intent(self,"attack",[1,2],False),
+            intent(self,"buff",["strength",1]),
+            intent(self,"drink",[2]),
             intent(self,"attack",[1,3]),
-            intent(self,"buff",["strength",1])
         ]
         self.elite = True
         self.boss = True
@@ -366,6 +345,7 @@ class byrdonis(enemy):
         self.intentions = [
             intent(self,"attack",[2,1]),
             intent(self,"attack",[1,3]),
+            intent(self,"drink",[1]),
             intent(self,"buff",["strength",1])
         ]
         self.elite = True

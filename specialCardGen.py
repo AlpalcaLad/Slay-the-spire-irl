@@ -43,6 +43,9 @@ cards = [ # template, name, type, image, description, [xOff, yOff, scale]
     # ["./art/cards/misc/potionRareTemplate.png","Ritual Pot","potion","./art/potions/ritual.png",["Gain 1 $ritual$", "$this combat$"],[20,60,2.5]],
     # ["./art/cards/misc/potionRareTemplate.png","Refreshment","potion","./art/potions/fullHeal.png",["Fully $heal$"],[20,60,2.5]],
     # ["./art/cards/misc/potionRareTemplate.png","Reward Pot","potion","./art/potions/reward.png",["Pick from 5 cards", "Add 1 to deck","$permanently$"],[20,60,2.5]],
+
+    #admin cards etc
+    
 ]
 
 from PIL import Image, ImageDraw, ImageFont

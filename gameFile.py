@@ -396,6 +396,9 @@ class player(entity):
         
 
     def draw(self):
+        if self.dead and self.hp > 0:
+            self.dead = False
+
         if self.vsp != 0:
             if self.y + self.vsp >= self.baseY:
                 self.y = self.baseY
@@ -794,6 +797,20 @@ class game():
                     ["Everyone gets 1 simple potion","Everyone gets 1 card reward","1 gold each"],
                     300,blocking=True
                 ))
+
+        #check if all players dead
+        found = False
+        for p in self.players:
+            if not p.dead:
+                found = True
+                break
+        if not found:
+            #All players died, show endscreen
+            iHandler.queue.append(instruction([
+                "You died...",
+                "You achieved a final score of",
+                f"{self.score} points"
+            ],-1,None,True))
         
         #render enemies
         for e in self.enemies:

@@ -3,7 +3,7 @@ import random
 import math
 import pygame
 import numpy as np
-from gameFile import entity
+from gameFile import entity, player
 from helperFuncs import *
 from enemies import enemy
 
@@ -19,11 +19,16 @@ class context():
     def draw(self):
         #check target is valid
         if self.target.dead:
-            self.target = None
             if isinstance(self.target,enemy):
                 for e in self.g.enemies:
                     if not e.dead:
                         self.target = e
+            elif isinstance(self.target,player):
+                for p in self.g.players:
+                    if not p.dead:
+                        self.target = p
+            else:
+                self.target = None
 
 
         #draw the target marker
