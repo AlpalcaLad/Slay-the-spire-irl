@@ -9,6 +9,10 @@ class reader():
         self.metrics = True
         self.cards = []
 
+    def preprocess(self,img):
+        _,imgOut = cv2.threshold(cv2.GaussianBlur(img,(5,5),0),0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+        return imgOut
+
     def readCodes(self,img):
         texts = self.qr.detect_and_decode(image=img)
         return texts

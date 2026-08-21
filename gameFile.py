@@ -29,10 +29,18 @@ class sprite():
         self.x = 0
         self.y = 0
         self.a = 1
+        self.ao = 1
+
+    def alpha(self,a):
+        chan = pygame.surfarray.pixels_alpha(self.img)
+        chan2 = np.minimum(chan, np.ones(chan.shape, dtype=chan.dtype)) * int(255 * a)
+        np.copyto(chan, chan2)
+        del chan
 
     def draw(self):
-        if self.a != 1:
-            self.img.set_alpha(self.a)
+        if self.a != self.ao:
+            self.alpha(self.a)
+            self.ao = self.a
         self.g.screen.blit(
             self.img,
             (
@@ -876,6 +884,7 @@ class game():
         #check if all enemies dead and in combat
         if len(self.enemies)==0 and self.inCombat:
             self.playerTurn = False
+            self.inCombat = False
             for p in self.players:
                 p.combatEnd()
 
@@ -903,11 +912,12 @@ class game():
                     break
             if not found:
                 #All players died, show endscreen
-                iHandler.queue.append(instruction([
-                    "You died...",
-                    "You achieved a final score and time of",
-                    f"{self.score} points, {secondsToTime(int(time.time()-self.startTime))}"
-                ],-1,None,True))
+                if len(iHandler.queue)<10:
+                    iHandler.queue.append(instruction([
+                        "You died...",
+                        "You achieved a final score and time of",
+                        f"{self.score} points, {secondsToTime(int(time.time()-self.startTime))}"
+                    ],-1,None,True))
         
         #render enemies
         for e in self.enemies:

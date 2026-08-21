@@ -23,10 +23,14 @@ class context():
                 for e in self.g.enemies:
                     if not e.dead:
                         self.target = e
+                if self.target.dead:
+                    self.target = None
             else:
                 for p in self.g.players:
                     if not p.dead:
                         self.target = p
+                if self.target.dead:
+                    self.target = None
 
 
         #draw the target marker
@@ -967,10 +971,10 @@ class grape(card):
         self.harmful = True
         self.selfTarget = False
 
-    def play(self,target=c.target):
+    def play(self):
         self.dmg = 1 + c.source.b.sommelier
         if not c.source.b.grapeShot:
-            self.damage(1,target)
+            self.damage(1)
         else:
             for e in c.g.enemies:
                 self.damage(1,e)
@@ -1021,7 +1025,7 @@ class snobbery(card):
         super().__init__()
         self.cost = 1
         self.block = 2
-        self.harmful = False
+        self.harmful = True
         self.selfTarget = False
 
     def play(self):

@@ -264,7 +264,7 @@ class enemy(entity):
                     self.intentions.append(self.intentionWaiting)
 
         if self.dying: #fade out
-            self.s.a-=0.01
+            self.s.a-=0.025
             if self.s.a<=0:
                 self.die()
 

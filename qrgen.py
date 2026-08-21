@@ -184,6 +184,14 @@ qrcodes = [
     "shopShot"
 ]
 
+qrcodes = [
+    "grapeA",
+    "grapeB",
+    "grapeC",
+    "grapeD",
+    "grapeE"
+]
+
 A4pages = []
 A4image = np.ones((2480,3508,3),dtype=np.uint8)*255
 
