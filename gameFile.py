@@ -15,18 +15,24 @@ import requests
 
 #region Sprite
 class sprite():
-    def __init__(self,parent,game,asset,scale=100,scaleBy=1):
+    def __init__(self,parent,game,asset,scale=100,scaleBy=1,surface=None):
         self.p = parent
         self.g = game
-        self.img = pygame.image.load(asset).convert_alpha()
-        if scale != 100:
-            self.img = pygame.transform.scale(self.img,(scale,scale))
-        if scaleBy != 1:
-            self.img = pygame.transform.scale_by(self.img,scaleBy)
+        if surface is None:
+            self.img = pygame.image.load(asset).convert_alpha()
+            if scale != 100:
+                self.img = pygame.transform.scale(self.img,(scale,scale))
+            if scaleBy != 1:
+                self.img = pygame.transform.scale_by(self.img,scaleBy)
+        else:
+            self.img = surface
         self.x = 0
         self.y = 0
+        self.a = 1
 
     def draw(self):
+        if self.a != 1:
+            self.img.set_alpha(self.a)
         self.g.screen.blit(
             self.img,
             (
@@ -34,6 +40,16 @@ class sprite():
                 self.p.y + self.y
             ),
         )
+
+#region Animation
+
+class animation():
+    def __init__(self,game,folder,animSpeed=0.1,repeat=False,scaleBy=1):
+        self.g = game
+        self.f = folder
+        self.anim = animSpeed
+        self.scale = scaleBy
+
 
 #region Asset Holder
 
@@ -199,6 +215,8 @@ class entity():
         self.b = buffHandler(self)
 
     def damage(self,dmg):
+        if self.dead:
+            return
         blockAm = min(dmg,self.block)
         self.block -= blockAm
 
@@ -210,7 +228,7 @@ class entity():
             self.hp -= dmg
 
         if self.hp <= 0:
-            self.die()
+            self.dying = True
 
     def die(self):
         self.dead = True
@@ -347,6 +365,8 @@ class player(entity):
         self.hpMax = self.hp
         self.className = className
 
+        self.sd = sprite(self,g,surface=greyscale(self.s),asset="")
+
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
 
     def play(self,cardText):
@@ -410,7 +430,20 @@ class player(entity):
                 self.y += self.vsp
                 self.vsp += self.grv
 
-        self.s.draw()
+        if not self.dying and not self.dead:
+            if self.y > self.baseY:
+                self.y = lerp(self.y,self.baseY,0.1)
+                if abs(self.y-self.baseY)<0.01:
+                    self.y = self.baseY
+            self.s.draw()
+        else:
+            if self.y < self.baseY+40:
+                self.y = lerp(self.y,self.baseY+40,0.1)
+                if abs(self.y-self.baseY+40)<0.01:
+                    self.y = self.baseY+40
+                    self.dead=True
+                    self.dying = False
+            self.sd.draw()
         self.h.draw()
 
     def endturn(self):
@@ -512,6 +545,11 @@ class game():
 
         self.startTime = time.time()
         self.score = 0
+        self.scoreSources = []
+
+    def addScore(self,am,reason="special"):
+        self.scoreSources.append((am,reason))
+        self.score += am
 
     def question(self):
         qVal = None
@@ -691,7 +729,7 @@ class game():
                 case "potRDamage":
                     if self.inCombat: c.target.damage(6)
                 case "potRScore":
-                    self.score += 5
+                    self.addScore(5,"potion")
                 case "potRStun":
                     if self.inCombat and not c.target.friendly:
                         e:enemy = c.target
@@ -792,11 +830,13 @@ class game():
                     ["Everyone gets 1 rare potion","Everyone gets 1 card reward","1 gold each"],
                     300,blocking=True
                 ))
+                self.addScore(5,"elite")
             else:
                 iHandler.queue.append(instruction(
                     ["Everyone gets 1 simple potion","Everyone gets 1 card reward","1 gold each"],
                     300,blocking=True
                 ))
+                self.addScore(2,"enemy")
 
         #check if all players dead
         found = False

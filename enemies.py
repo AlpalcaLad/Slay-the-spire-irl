@@ -237,6 +237,11 @@ class enemy(entity):
                 if self.intentionWaiting.repeat:
                     self.intentions.append(self.intentionWaiting)
 
+        if self.dying: #fade out
+            self.s.a-=0.01
+            if self.s.a<=0:
+                self.die()
+
     def act(self):
         self.b.startturn()
 
@@ -283,7 +288,7 @@ class scorebar():
             drawTextOutlined(self.g,str(self.p.block),(self.x-10,self.y-3),(20,20,100),(255,255,255))
 
         #score
-        width = c.g.score*2
+        width = self.p.score*2
         pygame.draw.rect(self.g.screen,"purple",(self.x,self.y,self.w+width,self.h), border_radius=self.r)
         self.g.screen.blit(
             self.g.font.render(
@@ -291,6 +296,15 @@ class scorebar():
             ),
             (self.x+self.w+14+width,self.y-3)
         )
+
+        #score source text
+        if self.p.scoreText != "":
+            self.g.screen.blit(
+                self.g.font.render(
+                    str(self.p.scoreText), True, (255,255,255)
+                ),
+                (self.x,self.y-33)
+            )
 
         #buffs and debuffs
         toDraw = self.p.b.itemise(self.g.a)
@@ -326,11 +340,48 @@ class boss(enemy):
         ]
         self.elite = True
         self.boss = True
+
+        #score text
+        self.score = 0
+        self.scoreTarget = 0
+        self.scoreText = ""
+        self.textTime = 0
+        self.textTimeMax = 30
         
     def draw(self):
+        #score lerping
+        if self.scoreText=="" and len(c.g.scoreSources)>0:
+            scoreToAdd, self.scoreText = c.g.scoreSources.pop()
+            self.scoreTarget += scoreToAdd
+            self.textTime = self.textTimeMax
+            self.scoreText += ": "+str(scoreToAdd)
+        if self.textTime > 0: self.textTime -= 1
+        else:
+            self.scoreText = ""
+
+        if abs(self.score-self.scoreTarget)>0.01:
+            self.score += (self.score-self.scoreTarget)/10
+        else:
+            self.score = self.scoreTarget
+
         super().draw()
         self.s.draw()
         self.h.draw()
+
+    def damage(self,dmg):
+        blockAm = min(dmg,self.block)
+        self.block -= blockAm
+
+        dmg -= blockAm
+        if dmg > 0:
+            if self.b.buffer > 0:
+                self.b.buffer -= 1
+                return
+            c.g.addScore(dmg / 2,"boss damage")
+
+    def startturn(self):
+        c.g.addScore(len(c.g.players),"players alive")
+        super().startturn()
 
 #region byrdonis
 class byrdonis(enemy):

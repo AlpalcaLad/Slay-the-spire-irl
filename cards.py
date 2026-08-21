@@ -297,6 +297,8 @@ class card():
         pass
 
     def damage(self, times=1,target = c.target):
+        if target.dead:
+            return
         #must have attacker and target
         if c.source is None or target is None:
             return
@@ -321,6 +323,8 @@ class card():
             target.damage(dmg)
     
     def protect(self,target=c.source):
+        if target.dead:
+            return
         blk = self.block
 
         frail = target.b.frail
@@ -331,6 +335,8 @@ class card():
         target.block += blk
     
     def sip(self,target=c.source):
+        if target.dead:
+            return
         if self.sips > 0:
             target.b.drinkSafe -= self.sips
             if target.b.drinkSafe < 0:
@@ -340,22 +346,29 @@ class card():
                 ],90,target,False))
 
     def exhaust(self):
+
         iHandler.queue.append(instruction([
             "Card exhausted!"
         ],90,c.source,False))
 
     def tipsy(self,am,target=c.target):
+        if target.dead:
+            return
         target.b.tipsy += am
         if target.b.tipsy >= 5:
             target.b.tipsy.wasted += 1
             target.b.tipsy -= 5
 
     def draw(self,am,target=c.source):
+        if target.dead:
+            return
         iHandler.queue.append(instruction([
             "Draw "+str(am)+f" card{"s" if self.am>1 else ""}"
         ],120,target,False))
 
     def heal(self,am,target=c.source):
+        if target.dead:
+            return
         target.hp = min(target.hp+am,target.hpMax)
 
     def brew(self,message,addition):
