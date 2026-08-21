@@ -7,7 +7,11 @@ def getenemy(enemyname):
     match enemyname:
         case "byrdonis":
             return byrdonis
-        case "cultist":
+        case "cultistA":
+            return cultist
+        case "cultistB":
+            return cultist
+        case "cultistC":
             return cultist
         case "fossilstlk":
             return fossil_stalker
@@ -77,6 +81,26 @@ class intent():
             case _:
                 return
 
+    def estimateDamage(self,am):
+        for player in self.g.players:
+            if player.dead: continue
+            dmg = am
+        
+            strength = self.p.b.strength
+            weak = self.p.b.weak
+            vulnerable = player.b.vulnerable
+                    
+            dmg += strength
+            if vulnerable > 0:
+                dmg *= 2
+                player.b.vulnerable -= 1
+            if weak > 0:
+                dmg = dmg // 2
+                self.p.b.weak -= 1
+        
+            return dmg
+        return 0
+
     def draw(self):
         match self.action:
             case "attack" | "attack_defend":
@@ -89,9 +113,9 @@ class intent():
                 )
 
                 if self.values[1] > 1:
-                    self.printVal = str(self.values[0])+"x"+str(self.values[1])
+                    self.printVal = str(self.estimateDamage(self.values[0]))+"x"+str(self.values[1])
                 else:
-                    self.printVal = str(self.values[0])
+                    self.printVal = str(self.estimateDamage(self.values[0]))
 
                 drawTextOutlined(self.g,self.printVal,(self.p.x+90,self.p.y-40),(100,60,20),(255,255,255))
 
@@ -573,10 +597,9 @@ class mawler(enemy):
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
         self.s = sprite(self,g,"./art/enemies/mawler.png",200)
         self.intentions = [
-            intent(self,"attack",[1,1]),
+            intent(self,"attack",[2,1],False),
             intent(self,"attack",[2,1]),
-            intent(self,"defend",[3]),
-            intent(self,"attack",[3,1]),
+            intent(self,"attack_defend",[1,1,len(c.g.players)]),
         ]
     
     def draw(self):

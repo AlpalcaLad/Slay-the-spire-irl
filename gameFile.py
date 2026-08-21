@@ -21,9 +21,9 @@ class sprite():
         if surface is None:
             self.img = pygame.image.load(asset).convert_alpha()
             if scale != 100:
-                self.img = pygame.transform.scale(self.img,(scale,scale))
+                self.img = pygame.transform.smoothscale(self.img,(scale,scale))
             if scaleBy != 1:
-                self.img = pygame.transform.scale_by(self.img,scaleBy)
+                self.img = pygame.transform.smoothscale_by(self.img,scaleBy)
         else:
             self.img = surface
         self.x = 0
@@ -75,8 +75,8 @@ class assetHolder():
         self.attackDefendAsset = self.load("./art/icons/attackDefendIcon.png",35)
         self.escapeAsset = self.load("./art/icons/escapeIcon.png",35)
 
-        self.ritualAsset = self.load("./art/icons/ritualIcon.png",35)
-        self.thornsAsset = self.load("./art/icons/thornsIcon.png",35)
+        self.ritualAsset = self.load("./art/icons/ritualIcon.png",25)
+        self.thornsAsset = self.load("./art/icons/thornsIcon.png",25)
         self.platingAsset = self.load("./art/icons/platingIcon.png",25)
         self.shellAsset = self.load("./art/icons/hardenedShell.png",25)
         self.shriekAsset = self.load("./art/icons/shriekIcon.png",25)
@@ -89,7 +89,7 @@ class assetHolder():
         self.vineAsset = self.load("./art/icons/vineIcon.png",25)
         self.herbAsset = self.load("./art/icons/herbIcon.png",25)
         self.minAsset = self.load("./art/icons/minIcon.png",25)
-        self.sommelierAsset = self.load("./art/icons/grapeDamageIcon.png",35)
+        self.sommelierAsset = self.load("./art/icons/grapeDamageIcon.png",25)
         self.alchemistAsset = self.load("./art/icons/alchemistIcon.png",25)
         self.grapeshotAsset = self.load("./art/icons/grapeshotIcon.png",25)
 
@@ -176,6 +176,7 @@ class buffHandler():
         # if self.frail>0: self.frail -= 1
         # if self.wasted>0: self.wasted -= 1
         if self.ritual>0: self.strength += self.ritual
+        
         self.freeCard = 0
 
     def endturn(self):
@@ -288,7 +289,7 @@ class healthbar():
                     self.y-13
                 ),
             )
-            drawTextOutlined(self.g,str(self.p.block),(self.x-10,self.y-3),(20,20,100),(255,255,255))
+            drawTextOutlined(self.g,str(self.p.block),(self.x-8,self.y),(20,20,100),(255,255,255))
             hpBarCol = (100,180,255)
 
         #health
@@ -299,7 +300,7 @@ class healthbar():
             self.g.font.render(
                 str(self.p.hp)+"/"+str(self.p.hpMax), True, (255,255,255)
             ),
-            (self.x+self.w+14,self.y-3)
+            (self.x+self.w+10,self.y+3)
         )
 
         #energy
@@ -311,7 +312,7 @@ class healthbar():
                     self.y-43
                 ),
             )
-            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+42,self.y-38),(100,60,20),(255,255,255))
+            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+40,self.y-28),(100,60,20),(255,255,255))
         elif self.p.energy==0: #draw dull sprite
             self.g.screen.blit(
                 self.g.a.noEnergyAsset,
@@ -320,7 +321,7 @@ class healthbar():
                     self.y-43
                 ),
             )
-            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+42,self.y-38),(80,50,10),(160,160,160))
+            drawTextOutlined(self.g,str(self.p.energy),(self.x+self.w+40,self.y-28),(80,50,10),(160,160,160))
 
         #buffs and debuffs
         toDraw = self.p.b.itemise(self.g.a)
@@ -328,7 +329,7 @@ class healthbar():
         for e in toDraw:
             #draw effect
             if e[0] != -1:
-                drawTextOutlined(self.g,e[0],(curX,self.y+23),(255,255,255),(0,0,0))
+                drawTextOutlined(self.g,e[0],(curX,self.y+28),(255,255,255),(0,0,0))
             else:
                 curX -= 15
             #blit icon to screen
@@ -372,27 +373,32 @@ class player(entity):
         self.startTurnText = [
             "Draw 4 cards"
         ]
-
+        spriteScale = 0.15
         match className: #setup player class
+            case "beermaster":
+                self.hp=10
+                self.s = sprite(self,g,"./art/characters/beer.png",scaleBy=spriteScale)
+                self.x = 1*self.g.W//5-135
             case "cocktail":
                 self.hp=10
                 self.deck = []
-                self.s = sprite(self,g,"./art/characters/cocktail.png",scaleBy=0.2)
-                self.x = 2*self.g.W//5-55
+                self.s = sprite(self,g,"./art/characters/cocktail.png",scaleBy=spriteScale)
+                self.x = 2*self.g.W//5-105
+                self.s.y += 50
                 self.hatchEffects = []
-            case "beermaster":
-                self.hp=10
-                self.s = sprite(self,g,"./art/characters/beer.png",scaleBy=0.2)
-                self.x = 1*self.g.W//5-45
             case "winecon":
                 self.hp=10
-                self.s = sprite(self,g,"./art/characters/wine.png",scaleBy=0.2)
-                self.x = 3*self.g.W//5-35
+                self.s = sprite(self,g,"./art/characters/wine.png",scaleBy=spriteScale*1.5)
+                self.x = 3*self.g.W//5-75
+                self.s.x -= 150
+                self.s.y-=30
                 self.wine = 0
             case "driver":
                 self.hp=10
-                self.s = sprite(self,g,"./art/characters/driver.png",scaleBy=0.2)
-                self.x = 4*self.g.W//5-25
+                self.s = sprite(self,g,"./art/characters/driver.png",scaleBy=spriteScale)
+                self.x = 4*self.g.W//5-45
+                self.s.y += 50
+                self.s.y-=30
             case _:
                 self.s = sprite(self,g,"./art/player1Art.png")
 
@@ -414,18 +420,21 @@ class player(entity):
         if cardToPlay.harmful and c.target.friendly:
             iHandler.queue.append(instruction([
                 "Cannot harm another player!"
-            ],120,c.source,False))
+            ],120,self,False))
+            return
 
         #playing helping card targetted at enemy
         if not cardToPlay.harmful and not cardToPlay.selfTarget and not c.target.friendly:
             iHandler.queue.append(instruction([
                 "Cannot help an enemy!"
-            ],120,c.source,False))
+            ],120,self,False))
+            return
 
-        if not cardToPlay.harmful and cardToPlay.selfTarget and c.target==c.source:
+        if not cardToPlay.harmful and not cardToPlay.selfTarget and c.target==c.source:
             iHandler.queue.append(instruction([
                 "Must target someone else",
-            ],120,c.source,False))
+            ],120,self,False))
+            return
 
         cost = cardToPlay.cost
 
@@ -442,11 +451,8 @@ class player(entity):
             ],120,self,False))
         else:
             self.energy-=cost
-            if cardToPlay.dmg > 0:
-                self.vsp = -6
-                self.awaitingCard = cardToPlay
-            else:
-                cardToPlay.play()
+            self.vsp = -4
+            self.awaitingCard = cardToPlay
         
 
     def draw(self):
@@ -614,6 +620,8 @@ class game():
         for e in self.enemies:
             e.act()
 
+        
+
     def mapToChar(self,string):
         if string=="1":
             return "beermaster"
@@ -664,6 +672,7 @@ class game():
 
             if len(self.enemies) == 0:
                 self.inCombat = True
+                self.playerTurn = True
 
             tempText = cardText
             # if tempText[-1].isupper():

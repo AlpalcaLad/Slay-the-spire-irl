@@ -32,11 +32,16 @@ class context():
         #draw the target marker
         if self.target is not None:
             self.offset = (self.offset+0.02)%(2*math.pi)
+            tempY = self.target.y - 32 - 5*math.sin(self.offset)
+            tempX = self.target.x+32
+            if not isinstance(self.target,enemy):
+                tempY += 90
+                tempX += 50
             self.g.screen.blit(
                 self.img,
                 (
-                    self.target.x+32,
-                    self.target.y - 32 - 5*math.sin(self.offset)
+                    tempX,
+                    tempY
                 )
             )
 
@@ -66,7 +71,9 @@ class instruction():
             cntr = (self.g.W/2, self.g.H/2)
             textMulti(self.g,self.text,cntr,True)
         else:
-            cntr = (self.target.x+32,self.target.y-24)
+            cntr = (self.target.x+self.target.s.x+32,self.target.y+self.target.s.y-24)
+            if not isinstance(self.target,enemy):
+                cntr = (cntr[0]+150,cntr[1]+150)
             textMulti(self.g,self.text,cntr,True,True)
             
 #region instruction handler
@@ -294,7 +301,8 @@ class card():
     def play(self):
         pass
 
-    def damage(self, times=1,target = c.target):
+    def damage(self, times=1,target = None):
+        if target is None: target = c.target
         if target.dead:
             return
         #must have attacker and target
@@ -320,7 +328,9 @@ class card():
         for t in range(times):
             target.damage(dmg)
     
-    def protect(self,target=c.source):
+    def protect(self,target=None):
+        if target is None: target = c.source
+
         if target.dead:
             return
         blk = self.block
@@ -332,7 +342,8 @@ class card():
 
         target.block += blk
     
-    def sip(self,target=c.source):
+    def sip(self,target=  None):
+        if target is None: target = c.source
         if target.dead:
             return
         if self.sips > 0:
@@ -349,7 +360,8 @@ class card():
             "Card exhausted!"
         ],90,c.source,False))
 
-    def tipsy(self,am,target=c.target):
+    def tipsy(self,am,target=None):
+        if target is None: target = c.target
         if target.dead:
             return
         target.b.tipsy += am
@@ -357,14 +369,16 @@ class card():
             target.b.tipsy.wasted += 1
             target.b.tipsy -= 5
 
-    def draw(self,am,target=c.source):
+    def draw(self,am,target=None):
+        if target is None: target = c.source
         if target.dead:
             return
         iHandler.queue.append(instruction([
             "Draw "+str(am)+f" card{"s" if self.am>1 else ""}"
         ],120,target,False))
 
-    def heal(self,am,target=c.source):
+    def heal(self,am,target=None):
+        if target is None: target = c.source
         if target.dead:
             return
         target.hp = min(target.hp+am,target.hpMax)
@@ -398,6 +412,7 @@ class strike(card):
         self.cost = 1
         self.dmg = 1
         self.harmful = True
+        self.selfTarget = False
 
     def play(self):
         self.damage()
@@ -1007,7 +1022,7 @@ class snobbery(card):
         self.cost = 1
         self.block = 2
         self.harmful = False
-        self.selfTarget = True
+        self.selfTarget = False
 
     def play(self):
         iHandler.queue.append(instruction([
