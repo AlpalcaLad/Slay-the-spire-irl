@@ -79,7 +79,7 @@ class assetHolder():
         self.thornsAsset = self.load("./art/icons/thornsIcon.png")
         self.platingAsset = self.load("./art/icons/platingIcon.png",25)
         self.shellAsset = self.load("./art/icons/hardenedShell.png",25)
-        self.shriekAsset = self.load("./art/icons/shriekAsset.png",25)
+        self.shriekAsset = self.load("./art/icons/shriekIcon.png",25)
 
     def load(self,path,scale = 45):
         return pygame.transform.scale(pygame.image.load(path).convert_alpha(),(scale,scale))
@@ -662,7 +662,7 @@ class game():
         elif cardText == "rest":
             if not self.inCombat:
                 for p in self.players:
-                    p.hp = p.hpMax
+                    p.hp = max(p.hp,p.hpMax//2)
                     p.dead = False
                     p.dying = False
 
@@ -689,7 +689,7 @@ class game():
             ]
 
             rewards[correctAns]=instruction(
-                ["Correct! You recieve 1 gold each as a reward."],
+                ["Correct! You recieve 2 gold each as a reward."],
                 300, None, True
             )
             iHandler.queue.append(instruction(
@@ -846,18 +846,19 @@ class game():
                 self.addScore(2,"enemy")
 
         #check if all players dead
-        found = False
-        for p in self.players:
-            if not p.dead:
-                found = True
-                break
-        if not found:
-            #All players died, show endscreen
-            iHandler.queue.append(instruction([
-                "You died...",
-                "You achieved a final score and time of",
-                f"{self.score} points, {secondsToTime(int(time.time()-self.startTime))}"
-            ],-1,None,True))
+        if len(self.players)>0:
+            found = False
+            for p in self.players:
+                if not p.dead:
+                    found = True
+                    break
+            if not found:
+                #All players died, show endscreen
+                iHandler.queue.append(instruction([
+                    "You died...",
+                    "You achieved a final score and time of",
+                    f"{self.score} points, {secondsToTime(int(time.time()-self.startTime))}"
+                ],-1,None,True))
         
         #render enemies
         for e in self.enemies:

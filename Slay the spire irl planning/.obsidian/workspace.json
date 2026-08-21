@@ -69,12 +69,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "events.md",
+                "file": "mechanics/potions.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "events"
+              "title": "potions"
             }
           },
           {
@@ -162,7 +162,7 @@
             }
           }
         ],
-        "currentTab": 8
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -326,16 +326,16 @@
       "bases:Create new base": false
     }
   },
-  "active": "66c9925f363bb623",
+  "active": "f23d8cc9e41414a8",
   "lastOpenFiles": [
+    "events.md",
+    "mechanics/shop.md",
+    "characters/Designated driver.md",
     "characters/Beer master.md",
     "characters/Wine connoisseur.md",
     "characters/Cocktail mixer.md",
-    "characters/Designated driver.md",
-    "mechanics/shop.md",
     "mechanics/score.md",
     "core/Main concept.md",
-    "events.md",
     "mechanics/potions.md",
     "mechanics/buffs and debuffs.md",
     "core/relics.md",

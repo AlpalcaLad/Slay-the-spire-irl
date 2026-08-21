@@ -181,6 +181,7 @@ qrcodes = [
     "potRFullHeal",
     "potRReward",
     "rest",
+    "shopShot"
 ]
 
 A4pages = []
