@@ -62,6 +62,8 @@ cards = [ # template, name, type, image, description, [xOff, yOff, scale]
     # ["./art/cards/misc/shopTemplate.png","Buy Shot","shop",None,["Costs 1 $gold$","Gain 2 $score$", "$Drink$ 1 shot"],[20,60,2.5]],
     # ["./art/cards/misc/shopTemplate.png","Buy Card","shop",None,["Costs 3 $gold$","Add a card of $choice$","to your $deck$"],[20,60,2.5]],
     # ["./art/cards/misc/shopTemplate.png","Buy Potion","shop",None,["Costs 2 $gold$","Gain a random","$rare potion$"],[20,60,2.5]],
+    
+
 ]
 
 from PIL import Image, ImageDraw, ImageFont

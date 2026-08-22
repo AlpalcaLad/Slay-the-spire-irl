@@ -5,7 +5,6 @@ import pygame
 import numpy as np
 from gameFile import entity
 from helperFuncs import *
-from enemies import enemy
 
 #region context
 class context():
@@ -19,7 +18,7 @@ class context():
     def draw(self):
         #check target is valid
         if self.target is not None and self.target.dead:
-            if isinstance(self.target,enemy):
+            if self.target.name=="enemy":
                 for e in self.g.enemies:
                     if not e.dead:
                         self.target = e
@@ -38,7 +37,7 @@ class context():
             self.offset = (self.offset+0.02)%(2*math.pi)
             tempY = self.target.y - 32 - 5*math.sin(self.offset)
             tempX = self.target.x+32
-            if not isinstance(self.target,enemy):
+            if self.target.name!="enemy":
                 tempY += 90
                 tempX += 50
             self.g.screen.blit(
@@ -76,7 +75,7 @@ class instruction():
             textMulti(self.g,self.text,cntr,True)
         else:
             cntr = (self.target.x+self.target.s.x+32,self.target.y+self.target.s.y-24)
-            if not isinstance(self.target,enemy):
+            if self.target.name!="enemy":
                 cntr = (cntr[0]+150,cntr[1]+150)
             textMulti(self.g,self.text,cntr,True,True)
             
@@ -181,6 +180,8 @@ def getcard(cardName):
             return keep_it_flowing()
         case "getstart":
             return get_it_started()
+        case "gintowin":
+            return gin_to_win()
         #region designated driver
         case "supplybag":
             return supply_bag()
@@ -206,8 +207,8 @@ def getcard(cardName):
             return wake_up_call()
         case "linestom":
             return line_the_stomach()
-        case "checkin":
-            return check_in()
+        # case "checkin":
+        #     return check_in()
         case "maybeone":
             return maybe_just_one()
         case "rulesbroke":
@@ -216,6 +217,8 @@ def getcard(cardName):
             return believe_in_you()
         case "freshenup":
             return freshen_up()
+        case "checkin":
+            return sealant()
         #region beermaster
         case "alcrage":
             return alcoholic_rage()
@@ -251,6 +254,8 @@ def getcard(cardName):
             return tacky_chunder()
         case "finisher":
             return finisher()
+        case "breakseal":
+            return break_the_seal()
         #region wine connoiseur
         case "grapetime":
             return grape_time()
@@ -290,6 +295,8 @@ def getcard(cardName):
             return grapeshot()
         case "bottlesmk":
             return bottle_smack()
+        case "vacseal":
+            return vacuum_seal()
         case _:
             return card()
 
@@ -936,13 +943,13 @@ class down_the_hatch(card):
                 case "squash":
                     c.source.energy += 2
                 case "orange":
-                    self.heal(1)
+                    self.printAppend("Draw ",2," cards")
                 case "cranberry":
                     self.printAppend("Exhaust up to ",2," cards")
                 case "peach":
                     self.tipsy(4)
                 case "blue":
-                    self.tipsy(4,c.source)
+                    self.tipsy(3,c.source)
                     c.source.b.strength += 1
                 case "gin":
                     c.source.b.gin += 1
@@ -1142,7 +1149,7 @@ class mineral_aroma(card):
 class pour_out_heart(card):
     def __init__(self):
         super().__init__()
-        self.cost = 0
+        self.cost = 1
         self.harmful = False
         self.selfTarget = True
 
@@ -1463,7 +1470,8 @@ class sealant(card):
 
     def play(self):
         for p in c.g.players:
-            p.hp = p.maxHp
+            if not p.dead and not p.dying:
+                p.hp = p.maxHp
 
         iHandler.queue.append(instruction([
             "exhausted"

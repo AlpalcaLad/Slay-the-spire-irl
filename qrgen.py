@@ -189,7 +189,30 @@ qrcodes = [
     "grapeB",
     "grapeC",
     "grapeD",
-    "grapeE"
+    "grapeE",
+    "grapeF",
+    "grapeG",
+    "alchemist2",
+    "gintowin2",
+    "keepitfl2",
+    "breakseal1",
+    "vacseal3"
+]
+
+qrcodes = [
+    "sealant4",
+    "schnapp2",
+    "easymode",
+    "grapeA3",
+    "grapeB3",
+    "grapeC3",
+    "grapeD3",
+    "grapeE3",
+    "grapeF3",
+    "grapeG3",
+    "grapeH3",
+    "grapeI3",
+    "peroni1",
 ]
 
 A4pages = []

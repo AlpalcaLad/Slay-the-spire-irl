@@ -87,9 +87,9 @@ def greyscale(surface: pygame.Surface):
     # restores the dimension from 2 to 3
     mean_arr3d = mean_arr[..., np.newaxis]
     # repeat the avg value obtained before over the axis 2
-    new_arr = np.repeat(mean_arr3d[:, :, :], 3, axis=2)
+    new_arr = np.repeat(mean_arr3d[:, :, :], 4, axis=2)
     # return the new surface
-    return pygame.surfarray.make_surface(new_arr)
+    return pygame.surfarray.make_surface(new_arr).convert_alpha()
 
 
 def lerp(val1,val2,am):

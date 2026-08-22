@@ -30,7 +30,10 @@ class manager():
         self.awaiting = False
 
     def reset(self):
+        pygame.quit()
+        c.target = None
         self.g = game()
+        self.gameConn = self.g.setup()
 
     def main(self):
         while True:

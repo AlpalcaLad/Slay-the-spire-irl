@@ -89,6 +89,9 @@ class assetHolder():
         self.shellAsset = self.load("./art/icons/hardenedShell.png",25)
         self.shriekAsset = self.load("./art/icons/shriekIcon.png",25)
 
+        self.tipsyAsset = self.load("./art/icons/tipsyIcon.png",25)
+        self.wastedAsset = self.load("./art/icons/wastedIcon.png",25)
+
         self.ginAsset = self.load("./art/icons/ginIcon.png",25)
         self.bufferAsset = self.load("./art/icons/bufferIcon.png",25)
 
@@ -126,6 +129,7 @@ class buffHandler():
         self.store: list[tuple] = [] #stored effects
         self.drinkSafe = 0
         self.drinksThisCombat = 0
+        self.stolenGold = 0
 
         #powers
         self.hellsraiser = 0
@@ -158,6 +162,7 @@ class buffHandler():
         self.store: list[tuple] = [] #stored effects
         self.drinkSafe = 0
         self.drinksThisCombat = 0
+        self.stolenGold = 0
 
         self.hellsraiser = 0
         self.grapeVine = 0
@@ -232,6 +237,10 @@ class buffHandler():
             effects.append((str(self.sommelier),assets.sommelierAsset))
         if self.grapeVine>0:
             effects.append((-1,assets.vineAsset))
+        if self.tipsy>0:
+            effects.append((str(self.tipsy),assets.tipsyAsset))
+        if self.wasted>0:
+            effects.append((str(self.wasted),assets.wastedAsset))
 
         return effects
 
@@ -363,6 +372,8 @@ class player(entity):
         self.friendly = True
         self.g : game = g
         self.y = self.g.H-250
+
+        self.name = "player"
 
         self.baseY = self.y
         self.vsp = 0
@@ -595,7 +606,13 @@ class game():
         self.score = 0
         self.scoreSources = []
 
+        self.quickMode = False
+
+        self.devMode = True
+
     def addScore(self,am,reason="special"):
+        if self.quickMode:
+            am *= 2
         self.scoreSources.append((am,reason))
         self.score += am
 
@@ -627,8 +644,6 @@ class game():
             e.startturn()
         for e in self.enemies:
             e.act()
-
-        
 
     def mapToChar(self,string):
         if string=="1":
@@ -711,17 +726,29 @@ class game():
             iHandler.queue.append(getevent(tempText.replace("event","",1)))
 
         elif cardText == "rest":
-            if not self.inCombat:
+            if not self.inCombat or self.devMode:
                 for p in self.players:
                     p.hp = max(p.hp,p.hpMax//2)
                     p.dead = False
                     p.dying = False
+
+        elif cardText == "killall":
+            self.inCombat = False
+            self.eliteCombat = False
+            c.target = None
+            self.enemies = []
 
         elif cardText == "shopShot":
             self.addScore(2,"shop")
             iHandler.queue.append(instruction(
                 ["Take a shot!"],-1,None,True,rewards
             ))
+
+        elif cardText == "quickMode":
+            self.quickMode = not self.quickMode
+            iHandler.queue.append(instruction([
+                "Quick mode: "+str(self.quickMode)
+            ],90,None,True))
 
         elif cardText=="pubquiz":
             #load up pub quiz question
@@ -780,12 +807,18 @@ class game():
                 case "potHeal":
                     c.target.hp = min(c.target.hp + 1, c.target.hpMax)
                 case "potFree":
+                    iHandler.queue.append(instruction([
+                        "next card free!"
+                    ],90,c.target))
                     c.target.b.freeCard += 1
                 case "potRMaxHP":
                     if c.target.friendly:
                         c.target.hpMax += 1
                         c.target.hp += 1
                 case "potRStrength":
+                    iHandler.queue.append(instruction([
+                        "1 perma strength gained!"
+                    ],90,c.target))
                     if c.target.friendly:
                         c.target.b.permaStrength += 1
                         if self.inCombat:
@@ -793,6 +826,9 @@ class game():
                 case "potRDamage":
                     if self.inCombat: c.target.damage(6)
                 case "potRScore":
+                    iHandler.queue.append(instruction([
+                        "5 score added!"
+                    ],90,c.target))
                     self.addScore(5,"potion")
                 case "potRStun":
                     if self.inCombat and not c.target.friendly:
@@ -803,7 +839,10 @@ class game():
                         "permenantly remove a card"
                     ],90,c.target))
                 case "potRPlating":
-                    c.target.b.permaPlating+=1
+                    c.target.b.permaPlating+=2
+                    iHandler.queue.append(instruction([
+                        "2 perma plating added!"
+                    ],90,c.target))
                 case "potRRitual":
                     c.target.b.ritual += 1
                 case "potRFullHeal":

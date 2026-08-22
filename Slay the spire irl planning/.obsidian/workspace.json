@@ -162,7 +162,7 @@
             }
           }
         ],
-        "currentTab": 6
+        "currentTab": 7
       }
     ],
     "direction": "vertical"
@@ -326,12 +326,14 @@
       "bases:Create new base": false
     }
   },
-  "active": "cb594f4c4854dfa6",
+  "active": "28df5be538cf0e0b",
   "lastOpenFiles": [
-    "characters/Cocktail mixer.md",
     "characters/Designated driver.md",
-    "characters/Wine connoisseur.md",
+    "mechanics/brew/blue curacao.md",
+    "characters/Cocktail mixer.md",
+    "mechanics/brew/orange juice.md",
     "characters/Beer master.md",
+    "characters/Wine connoisseur.md",
     "mechanics/potions.md",
     "events.md",
     "mechanics/shop.md",
@@ -341,11 +343,9 @@
     "core/relics.md",
     "mechanics/brew/peach schnapps.md",
     "mechanics/brew/gin.md",
-    "mechanics/brew/blue curacao.md",
     "Spin the bottle.md",
     "mechanics/brew/prosecco.md",
     "mechanics/brew/cranberry juice.md",
-    "mechanics/brew/orange juice.md",
     "mechanics/brew/squash.md",
     "mechanics/brew/vodka.md",
     "mechanics/brew/lemonade.md",

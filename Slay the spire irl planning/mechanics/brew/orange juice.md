@@ -1,1 +1,1 @@
-Heal 1 hp
+Draw 2 cards

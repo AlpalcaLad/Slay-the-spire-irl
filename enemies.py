@@ -32,9 +32,9 @@ def getenemy(enemyname):
         case "skulkcol":
             return skulking_colony
         case "slaverA":
-            return slaverA
-        case "slaverB":
             return slaverB
+        case "slaverB":
+            return slaverA
         case "slaverC":
             return slaverB
         case "terroreel":
@@ -108,7 +108,7 @@ class intent():
                     self.asset,
                     (
                         self.p.x+90,
-                        self.p.y-40
+                        self.p.y
                     ),
                 )
 
@@ -117,23 +117,23 @@ class intent():
                 else:
                     self.printVal = str(self.estimateDamage(self.values[0]))
 
-                drawTextOutlined(self.g,self.printVal,(self.p.x+90,self.p.y-40),(100,60,20),(255,255,255))
+                drawTextOutlined(self.g,self.printVal,(self.p.x+70,self.p.y+15),(100,60,20),(255,255,255))
 
             case "drink":
                 self.g.screen.blit(
                     self.asset,
                     (
-                        self.p.x+90,
-                        self.p.y-40
+                        self.p.x+80,
+                        self.p.y
                     ),
                 )
-                drawTextOutlined(self.g,str(self.values[0]),(self.p.x+90,self.p.y-40),(100,60,20),(255,255,255))
+                drawTextOutlined(self.g,str(self.values[0]),(self.p.x+70,self.p.y+15),(100,60,20),(255,255,255))
             case "buff" | "debuff" | "sleep" | "mystery" | "stun" | "defend" | "escape":
                 self.g.screen.blit(
                     self.asset,
                     (
-                        self.p.x+90,
-                        self.p.y-40
+                        self.p.x+60,
+                        self.p.y
                     ),
                 )
             case _:
@@ -231,6 +231,7 @@ class intent():
                         self.g.inCombat = False
                         self.g.eliteCombat = False
                     self.g.enemies.remove(self.p)
+                    c.target = None
                 #region TODO escape fog
             case _:
                 return
@@ -244,14 +245,14 @@ class enemy(entity):
         self.intentions: list[intent] = []
         self.elite = False
 
+        self.name = "enemy"
+
         self.baseY = self.y
         self.vsp = 0
         self.grv = 0.2
         self.intentionWaiting : intent = None
     
     def draw(self):
-        if len(self.intentions)>0:
-            self.intentions[0].draw()
 
         if self.vsp != 0:
             self.vsp += self.grv
@@ -267,6 +268,9 @@ class enemy(entity):
             self.s.a-=0.025
             if self.s.a<=0:
                 self.die()
+
+        if len(self.intentions)>0:
+            self.intentions[0].draw()
 
     def act(self):
         self.b.startturn()
@@ -310,11 +314,12 @@ class scorebar():
             drawTextOutlined(self.g,str(self.p.block),(self.x-10,self.y-3),(20,20,100),(255,255,255))
 
         #score
-        width = self.p.score*2
+        width = self.p.score*4
+        #print(self.p.scoreTarget)
         pygame.draw.rect(self.g.screen,"purple",(self.x,self.y,self.w+width,self.h), border_radius=self.r)
         self.g.screen.blit(
             self.g.font.render(
-                str(self.p.score), True, (255,255,255)
+                str(round(self.p.score,2)), True, (255,255,255)
             ),
             (self.x+self.w+14+width,self.y-3)
         )
@@ -349,10 +354,9 @@ class boss(enemy):
         super().__init__(g)
         self.hp = -1
         self.hpMax = self.hp
-        self.h = scorebar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemies/the_boss.png",300)
-        self.s.x=-30
-        self.s.y=-40
+        self.h = scorebar(self,self.g,self.x,self.y+240,20,20)
+        self.s = sprite(self,g,"./art/enemies/the_boss.png",scaleBy=0.2)
+        self.s.x=-80
         self.intentions = [
             intent(self,"drink",[1],False),
             intent(self,"attack",[1,2],False),
@@ -373,7 +377,7 @@ class boss(enemy):
     def draw(self):
         #score lerping
         if self.scoreText=="" and len(c.g.scoreSources)>0:
-            scoreToAdd, self.scoreText = c.g.scoreSources.pop()
+            scoreToAdd, self.scoreText = c.g.scoreSources.pop(0)
             self.scoreTarget += scoreToAdd
             self.textTime = self.textTimeMax
             self.scoreText += ": "+str(scoreToAdd)
@@ -382,12 +386,12 @@ class boss(enemy):
             self.scoreText = ""
 
         if abs(self.score-self.scoreTarget)>0.01:
-            self.score += (self.score-self.scoreTarget)/10
+            self.score = lerp(self.score,self.scoreTarget,0.1)
         else:
             self.score = self.scoreTarget
 
         if self.vsp == 0:
-            self.y = lerp(self.y,self.baseY - 30*math.sin(pygame.time.get_ticks() / 360)-16,0.05)
+            self.s.y = lerp(self.s.y,10+8*math.sin(pygame.time.get_ticks() / 720)-16,0.05)
 
         super().draw()
         self.s.draw()
@@ -427,9 +431,9 @@ class byrdonis(enemy):
         self.elite = True
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 #region cultist
 class cultist(enemy):
     def __init__(self,g):
@@ -437,16 +441,17 @@ class cultist(enemy):
         self.hp = 7  * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemies/cultist.png",200)
+        self.s = sprite(self,g,"./art/enemies/cultist.png",scaleBy=0.4)
+        self.s.y += 55
         self.intentions = [
             intent(self,"buff",["ritual",1],False),
             intent(self,"attack",[1,1])
         ]
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 #region fossil stalker
 class fossil_stalker(enemy):
     def __init__(self,g):
@@ -454,16 +459,17 @@ class fossil_stalker(enemy):
         self.hp = 10 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemies/fossil_stalker.png",200)
+        self.s = sprite(self,g,"./art/enemies/fossil_stalker.png",scaleBy=0.4)
+        self.s.y += 100
         self.intentions = [
             intent(self,"attack",[1,2]),
             intent(self,"buff",["strength",1])
         ]
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 
 #region frog knight
 class frog_knight(enemy):
@@ -472,7 +478,8 @@ class frog_knight(enemy):
         self.hp = 6 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemies/frog_knight.png",200)
+        self.s = sprite(self,g,"./art/enemies/frog_knight.png",scaleBy=0.4)
+        self.s.y+=10
         self.b.plating = 2 * len(self.g.players)
         self.block = self.b.plating
         self.intentions = [
@@ -483,9 +490,9 @@ class frog_knight(enemy):
         ]
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 
 #region Giant Head
 class giant_head(enemy):
@@ -494,9 +501,10 @@ class giant_head(enemy):
         self.hp = 18 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemies/giant_head.png",300)
+        self.s = sprite(self,g,"./art/enemies/giant_head.png",scaleBy=0.5)
         self.s.x-=30
-        self.s.y-=40
+        self.s.y+=40
+        print("START INTENTIONS")
         self.intentions = [
             intent(self,"mystery",["instruction",
                 instruction(["3..."],120,self)
@@ -509,12 +517,13 @@ class giant_head(enemy):
             ],False),
             intent(self,"attack",[6,1]),
         ]
+        print("END INTENTIONS")
         self.elite = True
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 
 #region Lagavulin
 class lagavulin(enemy):
@@ -523,10 +532,10 @@ class lagavulin(enemy):
         self.hp = 14 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemies/lagavulin_sleep.png",300)
-        self.s2 = sprite(self,g,"./art/enemies/lagavulin.png",300)
+        self.s = sprite(self,g,"./art/enemies/lagavulin_sleep.png",scaleBy=1.5)
+        self.s2 = sprite(self,g,"./art/enemies/lagavulin.png",scaleBy=0.5)
         self.x-=30
-        self.y-=40
+        self.s.y-=10
         self.b.plating = 2 * len(self.g.players)
         self.block = self.b.plating
         self.intentions = [
@@ -561,12 +570,12 @@ class lagavulin(enemy):
 
     
     def draw(self):
-        super().draw()
         if self.intentions[0].action=="mystery":
             self.s.draw()
         else:
             self.s2.draw()
         self.h.draw()
+        super().draw()
 
 #region leaf slime
 class leaf_slime(enemy):
@@ -575,7 +584,8 @@ class leaf_slime(enemy):
         self.hp = 5 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemies/leaf_slime.png",200)
+        self.s = sprite(self,g,"./art/enemies/leaf_slime.png",scaleBy=0.2)
+        self.s.y += 120
         self.intentions = [
             intent(self,"attack",[1,1]),
             intent(self,"debuff",["weak",2]),
@@ -584,9 +594,9 @@ class leaf_slime(enemy):
         ]
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 
 #region mawler
 class mawler(enemy):
@@ -595,7 +605,8 @@ class mawler(enemy):
         self.hp = 8 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemies/mawler.png",200)
+        self.s = sprite(self,g,"./art/enemies/mawler.png",scaleBy=0.4)
+        self.s.y += 80
         self.intentions = [
             intent(self,"attack",[2,1],False),
             intent(self,"attack",[2,1]),
@@ -603,9 +614,9 @@ class mawler(enemy):
         ]
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 
 #region nibbit
 class nibbit(enemy):
@@ -614,7 +625,8 @@ class nibbit(enemy):
         self.hp = 8 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemies/nibbit.png",200)
+        self.s = sprite(self,g,"./art/enemies/nibbit.png",scaleBy=0.3)
+        self.s.y += 130
         self.intentions = [
             intent(self,"attack",[1,2]),
             intent(self,"defend",[3]),
@@ -622,9 +634,9 @@ class nibbit(enemy):
         ]
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 
 #region orb walker
 class orb_walker(enemy):
@@ -633,7 +645,8 @@ class orb_walker(enemy):
         self.hp = 10 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemies/nibbit.png",200)
+        self.s = sprite(self,g,"./art/enemies/orb_walker.png",scaleBy=0.4)
+        self.s.y += 80
         self.intentions = [
             intent(self,"attack",[1,3]),
             intent(self,"drink",[1]),
@@ -641,32 +654,32 @@ class orb_walker(enemy):
         ]
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 
 #region skulking colony
 class skulking_colony(enemy):
     def __init__(self,g):
         super().__init__(g)
-        self.hp = 12 * len(self.g.players)
+        self.hp = 13 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemies/skulking_colony.png",300)
+        self.s = sprite(self,g,"./art/enemies/skulking_colony.png",scaleBy=0.5)
         self.x-=30
-        self.y-=40
+        self.y+=40
         self.b.hardenedShell = 4 * len(self.g.players)
         self.intentions = [
             intent(self,"attack",[2,1]),
-            intent(self,"debuff",["vulnerable",2]),
-            intent(self,"attack",[3,1]),
+            intent(self,"debuff",["vulnerable",1]),
+            intent(self,"attack",[2,1]),
         ]
         self.elite = True
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 
     def damage(self,dmg):
         blockAm = min(dmg,self.block)
@@ -694,16 +707,17 @@ class slaverA(enemy):
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
 
-        self.s = sprite(self,g,"./art/enemies/slaverA.png",200)
+        self.s = sprite(self,g,"./art/enemies/slaverA.png",scaleBy=0.4)
+        self.s.y += 90
         self.intentions = [
             intent(self,"attack",[2,1]),
             intent(self,"debuff",["vulnerable",2]),
         ]
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 
 class slaverB(enemy):
     def __init__(self,g):
@@ -712,16 +726,17 @@ class slaverB(enemy):
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
 
-        self.s = sprite(self,g,"./art/enemies/slaverB.png",200)
+        self.s = sprite(self,g,"./art/enemies/slaverB.png",scaleBy=0.4)
+        self.s.y += 90
         self.intentions = [
             intent(self,"debuff",["frail",2]),
             intent(self,"attack",[2,1]),
         ]
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 
 #region terror_eel
 class terror_eel(enemy):
@@ -730,9 +745,9 @@ class terror_eel(enemy):
         self.hp = 12 * len(self.g.players)
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
-        self.s = sprite(self,g,"./art/enemies/terror_eel.png",300)
+        self.s = sprite(self,g,"./art/enemies/terror_eel.png",scaleBy=0.5)
         self.x-=30
-        self.y-=40
+        self.s.y-=40
         self.intentions = [
             intent(self,"attack",[1,3]),
             intent(self,"attack",[2,1]),
@@ -743,9 +758,9 @@ class terror_eel(enemy):
         self.b.shriek = self.hpMax//2
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 
     def damage(self):
         super().damage()
@@ -765,27 +780,33 @@ class thief(enemy):
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
 
-        self.s = sprite(self,g,"./art/enemies/thief.png",200)
+        self.s = sprite(self,g,"./art/enemies/thief.png",scaleBy=0.4)
+        self.s.y += 120
+        
         self.intentions = [
             intent(self,"attack",[2,1],False),
-            intent(self,"attack",[2,1],False),
+            intent(self,"attack",[1,1],False),
             intent(self,"attack",[2,1],False),
             intent(self,"defend",[3],False),
             intent(self,"escape",[],False),
             intent(self,"defend",[9999],False) #Just to flag somethings gone wrong - should never happen
         ]
+        if random.randint(0,1)==1:
+            self.intentions.insert(0,intent(self,"attack",[1,1],False))
 
     def act(self):
         if self.intentions[0].action=="attack":
+            choice = random.choice(c.g.players)
+            
             iHandler.queue.append(instruction(
-                ["Thief steals 1 gold!"],120,random.choice(c.g.players)
+                ["Thief steals 1 gold!"],120,choice
             ))
         super().act()
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
 
 #region vine shambler
 class vine_shambler(enemy):
@@ -795,13 +816,14 @@ class vine_shambler(enemy):
         self.hpMax = self.hp
         self.h = healthbar(self,self.g,self.x,self.y+200,125,20)
 
-        self.s = sprite(self,g,"./art/enemies/vine_shambler.png",200)
+        self.s = sprite(self,g,"./art/enemies/vine_shambler.png",scaleBy=0.4)
+        self.s.y += 50
         self.intentions = [
             intent(self,"drink",[2]),
             intent(self,"attack",[3,1]),
         ]
     
     def draw(self):
-        super().draw()
         self.s.draw()
         self.h.draw()
+        super().draw()
