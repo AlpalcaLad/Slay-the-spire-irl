@@ -79,18 +79,15 @@ def drawTextOutlined(g,text,pos,outcol,incol):
     )
 
 import numpy as np
-#SRC: https://stackoverflow.com/questions/10261440/how-can-i-make-a-greyscale-copy-of-a-surface-in-pygame
+#SRC: https://github.com/pygame/pygame/issues/1244
 def greyscale(surface: pygame.Surface):
-    arr = pygame.surfarray.array3d(surface)
-    # calulates the avg of the "rgb" values, this reduces the dim by 1
-    mean_arr = np.mean(arr, axis=2)
-    # restores the dimension from 2 to 3
-    mean_arr3d = mean_arr[..., np.newaxis]
-    # repeat the avg value obtained before over the axis 2
-    new_arr = np.repeat(mean_arr3d[:, :, :], 4, axis=2)
-    # return the new surface
-    return pygame.surfarray.make_surface(new_arr).convert_alpha()
-
+    surface_copy = surface.copy()  # I want to use the original surface as is.
+    arr = pygame.surfarray.pixels3d(surface_copy)
+    mean_arr = np.dot(arr, [0.216, 0.587, 0.144])
+    arr[:, :, 0] = mean_arr
+    arr[:, :, 1] = mean_arr
+    arr[:, :, 2] = mean_arr
+    return surface_copy
 
 def lerp(val1,val2,am):
     return val1 + (val2-val1)*am

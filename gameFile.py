@@ -278,6 +278,7 @@ class entity():
 
         if self.hp <= 0:
             self.dying = True
+            self.hp = 0
 
     def die(self):
         self.dead = True
@@ -310,7 +311,7 @@ class healthbar():
             hpBarCol = (100,180,255)
 
         #health
-        ratio = self.p.hp / max(1,self.p.hpMax)
+        ratio = max(self.p.hp / max(1,self.p.hpMax),0)
         pygame.draw.rect(self.g.screen,"red",(self.x,self.y,self.w,self.h), border_radius=self.r)
         pygame.draw.rect(self.g.screen,hpBarCol,(self.x,self.y,self.w*ratio,self.h), border_radius=self.r)
         self.g.screen.blit(
@@ -496,10 +497,11 @@ class player(entity):
                     self.y = self.baseY
             self.s.draw()
         else:
-            if self.y < self.baseY+40:
-                self.y = lerp(self.y,self.baseY+40,0.1)
-                if abs(self.y-self.baseY+40)<0.01:
-                    self.y = self.baseY+40
+            deadDown = 80
+            if self.y < self.baseY+deadDown:
+                self.y = lerp(self.y,self.baseY+deadDown,0.1)
+                if abs(self.y-self.baseY+deadDown)<0.01:
+                    self.y = self.baseY+deadDown
                     self.dead=True
                     self.dying = False
             self.sd.draw()
