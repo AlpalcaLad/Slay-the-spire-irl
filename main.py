@@ -13,7 +13,7 @@ class manager():
         self.prevImage = None
         self.oldCards = {}
         self.keepFor = 60*4 #how many ticks before card can be replayed
-        self.cam = cv2.VideoCapture(0)
+        self.cam = cv2.VideoCapture(1)
         self.fps = 120
         self.laplaceThresh = 1000
 

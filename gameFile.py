@@ -170,7 +170,7 @@ class buffHandler():
         self.minAroma = 0
         self.sommelier = 0
         self.alchemist = 0
-        self.grapeShot = 0
+        self.grapeshot = 0
         self.buffer = 0
     
         self.ritual = 0
@@ -200,6 +200,7 @@ class buffHandler():
         if self.vulnerable>0: self.vulnerable -= 1
         if self.frail>0: self.frail -= 1
         if self.wasted>0: self.wasted -= 1
+        if self.damageTaken > 0: self.damageTaken = 0
 
     def itemise(self, assets: assetHolder) -> list[tuple[int,pygame.Surface]]:
         effects = []
@@ -268,7 +269,6 @@ class entity():
             return
         blockAm = min(dmg,self.block)
         self.block -= blockAm
-
         dmg -= blockAm
         if dmg > 0:
             if self.b.buffer > 0:
@@ -396,25 +396,25 @@ class player(entity):
         spriteScale = 0.15
         match className: #setup player class
             case "beermaster":
-                self.hp=10
+                self.hp=25
                 self.s = sprite(self,g,"./art/characters/beer.png",scaleBy=spriteScale)
                 self.x = 1*self.g.W//5-135
             case "cocktail":
-                self.hp=10
+                self.hp=20
                 self.deck = []
                 self.s = sprite(self,g,"./art/characters/cocktail.png",scaleBy=spriteScale)
                 self.x = 2*self.g.W//5-105
                 self.s.y += 50
                 self.hatchEffects = []
             case "winecon":
-                self.hp=10
+                self.hp=20
                 self.s = sprite(self,g,"./art/characters/wine.png",scaleBy=spriteScale*1.5)
                 self.x = 3*self.g.W//5-75
                 self.s.x -= 150
                 self.s.y-=30
                 self.wine = 0
             case "driver":
-                self.hp=10
+                self.hp=25
                 self.s = sprite(self,g,"./art/characters/driver.png",scaleBy=spriteScale)
                 self.x = 4*self.g.W//5-45
                 self.s.y += 50
@@ -474,6 +474,8 @@ class player(entity):
             self.vsp = -4
             self.awaitingCard = cardToPlay
         
+    def damage(self,am):
+        super().damage(am)
 
     def draw(self):
         if self.dead and self.hp > 0:
@@ -569,7 +571,8 @@ class game():
         flags = pygame.SCALED
         flags |= pygame.RESIZABLE
 
-        self.screen = pygame.display.set_mode((self.W,self.H), flags | pygame.HIDDEN)
+        os.environ["SDL_VIDEO_WINDOW_POS"]=f"{1920},{0}"
+        self.screen = pygame.display.set_mode((self.W,self.H), flags | pygame.NOFRAME)
         scale_fact = 2
         window = sdl2.Window.from_display_module()
         window.size = (self.W * scale_fact, self.H * scale_fact)
@@ -698,6 +701,8 @@ class game():
             if len(self.enemies) == 0:
                 self.inCombat = True
                 self.playerTurn = True
+                for p in self.players:
+                    p.startturn()
 
             tempText = cardText
             # if tempText[-1].isupper():
@@ -782,74 +787,78 @@ class game():
                 quizT,-1,None,True,rewards
             ))
 
-        elif cardText.startswith("pot"):
+        elif cardText.lower().startswith("pot"):
             #potions
-            match cardText:
-                case "potWeak":
-                    if self.inCombat: c.target.b.weak += 1
-                case "potStrength":
-                    if self.inCombat: c.target.b.strength += 1
-                case "potDraw":
+            match cardText.lower():
+                case "potweak":
+                    if self.inCombat and not c.target.friendly: c.target.b.weak += 1
+                case "potstrength":
+                    if self.inCombat and c.target.friendly: c.target.b.strength += 1
+                case "potdraw":
                     if self.inCombat: iHandler.queue.append(instruction([
                         "draw 2 cards"
                     ],90,c.target))
-                case "potVuln":
-                    if self.inCombat: c.target.b.vulnerable += 1
-                case "potTipsy":
-                    if self.inCombat: c.target.b.tipsy += 3
-                case "potEnergy":
+                case "potvuln":
+                    if self.inCombat and not c.target.friendly: c.target.b.vulnerable += 1
+                case "pottipsy":
+                    if self.inCombat and not c.target.friendly: c.target.b.tipsy += 3
+                case "potenergy":
                     if self.inCombat and c.target.friendly:
                         c.target.energy += 2
-                case "potExhaust":
+                case "potexhaust":
                     if self.inCombat: iHandler.queue.append(instruction([
                         "exhaust 2 cards"
                     ],90,c.target))
-                case "potDamage":
-                    if self.inCombat: c.target.damage(2)
-                case "potHeal":
-                    c.target.hp = min(c.target.hp + 1, c.target.hpMax)
-                case "potFree":
-                    iHandler.queue.append(instruction([
-                        "next card free!"
-                    ],90,c.target))
-                    c.target.b.freeCard += 1
-                case "potRMaxHP":
+                case "potdamage":
+                    if self.inCombat and not c.target.friendly: c.target.damage(2)
+                case "potheal":
+                    if c.target.friendly: c.target.hp = min(c.target.hp + 1, c.target.hpMax)
+                case "potfree":
+                    if c.target.friendly:
+                        iHandler.queue.append(instruction([
+                            "next card free!"
+                        ],90,c.target))
+                        c.target.b.freeCard += 1
+                case "potrmaxhp":
                     if c.target.friendly:
                         c.target.hpMax += 1
                         c.target.hp += 1
-                case "potRStrength":
-                    iHandler.queue.append(instruction([
-                        "1 perma strength gained!"
-                    ],90,c.target))
+                case "potrstrength":
                     if c.target.friendly:
+                        iHandler.queue.append(instruction([
+                            "1 perma strength gained!"
+                        ],90,c.target))
                         c.target.b.permaStrength += 1
                         if self.inCombat:
                             c.target.b.strength += 1
-                case "potRDamage":
-                    if self.inCombat: c.target.damage(6)
-                case "potRScore":
+                case "potrdamage":
+                    if self.inCombat and not c.target.friendly: c.target.damage(6)
+                case "potrscore":
                     iHandler.queue.append(instruction([
                         "5 score added!"
                     ],90,c.target))
                     self.addScore(5,"potion")
-                case "potRStun":
+                case "potrstun":
                     if self.inCombat and not c.target.friendly:
                         e:enemy = c.target
                         e.intentions.insert(0,intent(e,"stun",[],False))
-                case "potRRemove":
+                case "potrremove":
                     iHandler.queue.append(instruction([
                         "permenantly remove a card"
                     ],90,c.target))
-                case "potRPlating":
-                    c.target.b.permaPlating+=2
-                    iHandler.queue.append(instruction([
-                        "2 perma plating added!"
-                    ],90,c.target))
-                case "potRRitual":
-                    c.target.b.ritual += 1
-                case "potRFullHeal":
-                    c.target.hp = c.target.hpMax
-                case "potRReward":
+                case "potrplating":
+                    if c.target.friendly:
+                        c.target.b.permaPlating+=2
+                        iHandler.queue.append(instruction([
+                            "2 perma plating added!"
+                        ],90,c.target))
+                case "potrritual":
+                    if c.target.friendly:
+                        c.target.b.ritual += 1
+                case "potrfullheal":
+                    if c.target.friendly:
+                        c.target.hp = c.target.hpMax
+                case "potrreward":
                     iHandler.queue.append(instruction([
                         "Gain a 5-option card reward"
                     ],120,c.target))

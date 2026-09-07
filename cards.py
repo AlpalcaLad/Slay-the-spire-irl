@@ -588,7 +588,7 @@ class wingman(card):
 class beer_jacket(card):
     def __init__(self):
         super().__init__()
-        self.cost = 2
+        self.cost = 1
         self.block = 2
         self.sips = 1
         self.harmful = False
@@ -614,14 +614,12 @@ class ring_of_fire(card):
 class split_the_g(card):
     def __init__(self):
         super().__init__()
-        self.cost = 1
-        self.harmful = False
-        self.selfTarget = True
+        self.cost = 2
+        self.harmful = True
+        self.selfTarget = False
 
     def play(self):
-        for p in c.g.players:
-            p.energy += 1
-            self.sip(p)
+        c.target.b.vulnerable *= 3
 
 class hellsraiser(card):
     def __init__(self):
@@ -980,7 +978,7 @@ class grape(card):
 
     def play(self):
         self.dmg = 1 + c.source.b.sommelier
-        if not c.source.b.grapeShot:
+        if not c.source.b.grapeshot:
             self.damage(1)
         else:
             for e in c.g.enemies:
@@ -1171,11 +1169,10 @@ class one_more_glass(card):
     def play(self):
         iHandler.queue.append(instruction([
             "Add a dazed",
-            "to your discard pile",
-            "draw 2"
+            "to your draw pile",
+            "Add 3 grapes"
         ],180,c.source,False))
         self.status()
-        c.source.energy += 2
 
 class sommelier(card):
     def __init__(self):

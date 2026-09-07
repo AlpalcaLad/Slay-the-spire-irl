@@ -82,6 +82,7 @@ class intent():
                 return
 
     def estimateDamage(self,am):
+        dmgStore = 0
         for player in self.g.players:
             if player.dead: continue
             dmg = am
@@ -90,7 +91,7 @@ class intent():
             weak = self.p.b.weak
             vulnerable = player.b.vulnerable
                     
-            dmg += strength
+            dmg += strength + self.p.b.ritual
             if vulnerable > 0:
                 dmg *= 2
                 player.b.vulnerable -= 1
@@ -98,8 +99,8 @@ class intent():
                 dmg = dmg // 2
                 self.p.b.weak -= 1
         
-            return dmg
-        return 0
+            dmg = max(dmgStore,dmg)
+        return dmg
 
     def draw(self):
         match self.action:
@@ -162,6 +163,7 @@ class intent():
 
             for t in range(times):
                 player.damage(dmg)
+                print(dmg)
 
     def defend(self, am: int):
         blk = am
@@ -176,7 +178,7 @@ class intent():
         if sips > 0:
             for p in self.g.players:
                 if p.dead: continue
-                p.b.drinkSafe -= self.sips
+                p.b.drinkSafe -= sips
                 if p.b.drinkSafe < 0:
                     p.b.drinkSafe = 0
                     iHandler.queue.append(instruction([
@@ -187,6 +189,7 @@ class intent():
     def act(self):
         match self.action:
             case "attack":
+                #print(c.g.players)
                 self.damage(self.values[0],self.values[1])
             case "defend":
                 self.defend(self.values[0])
@@ -206,16 +209,16 @@ class intent():
             case "debuff":
                 match self.values[0]:
                     case "frail":
-                        for p in self.g.players:
+                        for p in c.g.players:
                             p.b.frail += self.values[1]
                     case "vulnerable":
-                        for p in self.g.players:
+                        for p in c.g.players:
                             p.b.vulnerable += self.values[1]
                     case "weak":
-                        for p in self.g.players:
+                        for p in c.g.players:
                             p.b.weak += self.values[1]
                     case "strength":
-                        for p in self.g.players:
+                        for p in c.g.players:
                             p.b.strength -= self.values[1]
                     case _:
                         pass
@@ -261,6 +264,7 @@ class enemy(entity):
                 self.y = self.baseY
                 self.vsp = 0
                 self.intentionWaiting.act()
+                self.acting = False
                 if self.intentionWaiting.repeat:
                     self.intentions.append(self.intentionWaiting)
 
@@ -279,6 +283,7 @@ class enemy(entity):
             cur = self.intentions.pop(0)
             self.vsp = -5
             self.intentionWaiting = cur
+            self.acting = True
 
     def startturn(self):
         self.block = 0
